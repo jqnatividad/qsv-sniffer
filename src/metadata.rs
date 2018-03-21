@@ -22,19 +22,15 @@ pub struct Header {
 pub enum Quote {
     /// Quotes are not used in the CSV file.
     None,
-    /// The character used as the quote character, and what happens when a double-quote occurs.
-    Some {
-        character: u8,
-        doublequote_escapes: bool
-    }
+    /// The character used as the quote character
+    Some(u8)
 }
 impl fmt::Debug for Quote {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Quote::Some { ref character, ref doublequote_escapes } => {
+            Quote::Some(ref character) => {
                 f.debug_struct("Some")
                     .field("character", &char::from(*character))
-                    .field("doublequote_escapes", &doublequote_escapes)
                     .finish()
             },
             Quote::None => write!(f, "None")
@@ -100,6 +96,7 @@ pub struct Dialect {
     pub header: Header,
     pub terminator: Terminator,
     pub quote: Quote,
+    pub doublequote_escapes: bool,
     pub escape: Escape,
     pub comment: Comment,
     pub flexible: bool,
@@ -114,6 +111,7 @@ impl PartialEq for Dialect {
                 _ => false
             }
             && self.quote == other.quote
+            && self.doublequote_escapes == other.doublequote_escapes
             && self.escape == other.escape
             && self.comment == other.comment
             && self.flexible == other.flexible
@@ -128,6 +126,7 @@ impl fmt::Debug for Dialect {
             .field("header", &self.header)
             .field("terminator", &self.terminator)
             .field("quote", &self.quote)
+            .field("doublequote_escapes", &self.doublequote_escapes)
             .field("escape", &self.escape)
             .field("comment", &self.comment)
             .field("flexible", &self.flexible)
@@ -161,14 +160,14 @@ impl From<Dialect> for ReaderBuilder {
             .has_headers(dialect.header.has_header_row)
             .terminator(dialect.terminator)
             .escape(dialect.escape.into())
+            .double_quote(dialect.doublequote_escapes)
             .comment(dialect.comment.into())
             .flexible(dialect.flexible);
 
         match dialect.quote {
-            Quote::Some { character, doublequote_escapes } => {
+            Quote::Some(character) => {
                 bldr.quoting(true);
                 bldr.quote(character);
-                bldr.double_quote(doublequote_escapes);
             },
             Quote::None => {
                 bldr.quoting(false);

@@ -21,6 +21,7 @@ fn test_semicolon() {
             },
             terminator: Terminator::CRLF,
             quote: Quote::None,
+            doublequote_escapes: true,
             escape: Escape::Disabled,
             comment: Comment::Disabled,
             flexible: false
@@ -42,6 +43,7 @@ fn test_comma() {
             },
             terminator: Terminator::CRLF,
             quote: Quote::None,
+            doublequote_escapes: true,
             escape: Escape::Disabled,
             comment: Comment::Disabled,
             flexible: false
@@ -64,6 +66,7 @@ fn test_flexible() {
             },
             terminator: Terminator::CRLF,
             quote: Quote::None,
+            doublequote_escapes: true,
             escape: Escape::Disabled,
             comment: Comment::Disabled,
             flexible: true

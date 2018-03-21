@@ -11,7 +11,8 @@ fn main() {
     let dialect = Dialect {
         delimiter: b',',
         header: Header { has_header_row: true, num_preamble_rows: 4 },
-        quote: Quote::Some { character: b'"', doublequote_escapes: true },
+        quote: Quote::Some(b'"'),
+        doublequote_escapes: true,
         comment: Comment::Disabled,
         escape: Escape::Disabled,
         terminator: Terminator::CRLF,
