@@ -5,6 +5,7 @@ use std::path::Path;
 
 use csv_sniffer::{Sniffer, SampleSize};
 use csv_sniffer::metadata::*;
+use csv_sniffer::field_type::Type;
 use csv::Terminator;
 
 #[test]
@@ -26,7 +27,14 @@ fn test_semicolon() {
             comment: Comment::Disabled,
             flexible: false
         },
-        num_fields: 5
+        num_fields: 5,
+        types: vec![
+            Type::Text,
+            Type::Text,
+            Type::Unsigned,
+            Type::Text,
+            Type::Text
+        ]
     });
 }
 
@@ -48,7 +56,14 @@ fn test_comma() {
             comment: Comment::Disabled,
             flexible: false
         },
-        num_fields: 5
+        num_fields: 5,
+        types: vec![
+            Type::Text,
+            Type::Unsigned,
+            Type::Unsigned,
+            Type::Unsigned,
+            Type::Unsigned
+        ]
     });
 }
 
@@ -71,6 +86,15 @@ fn test_flexible() {
             comment: Comment::Disabled,
             flexible: true
         },
-        num_fields: 7
+        num_fields: 7,
+        types: vec![
+            Type::Text,
+            Type::Unsigned,
+            Type::Unsigned,
+            Type::Text,
+            Type::Text,
+            Type::Unsigned,
+            Type::Text
+        ]
     });
 }

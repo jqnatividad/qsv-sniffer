@@ -13,4 +13,4 @@ pub(crate) mod chain;
 mod sniffer;
 pub use sniffer::{Sniffer, SampleSize};
 
-mod infer_type;
+pub mod field_type;

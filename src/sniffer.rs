@@ -10,7 +10,7 @@ use csv_core as csvc;
 use metadata::*;
 use error::*;
 use chain::*;
-use infer_type::Types;
+use field_type::{infer_record_types, infer_types, get_best_types, Type, TypeGuesses};
 
 /// Argument used when calling `sample_size` on `Sniffer`.
 #[derive(Debug, Clone)]
@@ -34,6 +34,7 @@ pub struct Sniffer {
 
     // Metadata guesses
     delimiter_freq: Option<usize>,
+    types: Vec<Type>,
 
     // sample size to sniff
     sample_size: Option<SampleSize>,
@@ -106,8 +107,7 @@ impl Sniffer {
             self.infer_delim_preamble(&mut reader)?;
         }
 
-        // let (types, has_header_row) = self.infer_types(&mut reader, &quote, delim,
-        //     num_preamble_rows, flex)?;
+        self.infer_types(&mut reader)?;
 
         // as this point of the process, we should have all these filled in.
         assert!(self.delimiter.is_some()
@@ -115,13 +115,14 @@ impl Sniffer {
             && self.quote.is_some()
             && self.flexible.is_some()
             && self.delimiter_freq.is_some()
+            && self.has_header_row.is_some()
         );
         Ok(Metadata {
             dialect: Dialect {
                 delimiter: self.delimiter.unwrap(),
                 header: Header {
                     num_preamble_rows: self.num_preamble_rows.unwrap(),
-                    has_header_row: true,
+                    has_header_row: self.has_header_row.unwrap(),
                 },
                 terminator: Terminator::CRLF,
                 quote: self.quote.clone().unwrap(),
@@ -131,6 +132,7 @@ impl Sniffer {
                 flexible: self.flexible.unwrap(),
             },
             num_fields: self.delimiter_freq.unwrap() + 1,
+            types: self.types.clone()
         })
     }
 
@@ -327,14 +329,49 @@ impl Sniffer {
         Ok(())
     }
 
-    fn infer_types<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()>
-    {
-        let mut csv_reader = self.create_csv_reader(reader)?;
-        for record in csv_reader.records() {
-            let _record = record?;
+    fn infer_types<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()> {
+        // prerequisites for calling this function:
+        assert!(self.delimiter_freq.is_some());
+        // unwraps is safe
+        let field_count = self.delimiter_freq.unwrap() + 1;
 
+
+        let mut csv_reader = self.create_csv_reader(reader)?;
+        let mut records_iter = csv_reader.records();
+
+        // Infer types for the top row. We'll save this set of types to check against the types
+        // of the remaining rows to see if this is part of the data or a separate header row.
+        let header_row_types = match records_iter.next() {
+            Some(record) => infer_record_types(&record?),
+            None => {
+                return Err(SnifferError::SniffingFailed("CSV empty (after preamble)".into()));
+            }
+        };
+        let mut row_types = vec![TypeGuesses::all(); field_count];
+
+        let mut count = 0;
+        for record in records_iter {
+            for (i, field) in record?.iter().enumerate() {
+                row_types[i] &= infer_types(field);
+            }
+            count += 1;
         }
-        Err(SnifferError::SniffingFailed("unimplemented".to_string()))
+        if count == 0 {
+            // there's only one row in the whole data file (the top row already parsed),
+            // so we're going to assume it's a data row, not a header row.
+            self.has_header_row = Some(false);
+            self.types = get_best_types(header_row_types);
+            return Ok(());
+        }
+
+        if header_row_types.iter().zip(&row_types).any(|(header, data)| !data.allows(header)) {
+            self.has_header_row = Some(true);
+        } else {
+            self.has_header_row = Some(false);
+        }
+
+        self.types = get_best_types(row_types);
+        Ok(())
     }
 
     fn create_csv_reader<'a, R: Read + Seek>(&self, reader: &'a mut R)
@@ -368,7 +405,6 @@ impl Sniffer {
     }
 
 }
-
 
 fn quote_count<R: Read>(reader: &mut R, character: char, delim: &Option<u8>)
     -> Result<Option<(usize, u8)>>

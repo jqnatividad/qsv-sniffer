@@ -6,6 +6,97 @@ use std::fs::File;
 use csv::{Reader, ReaderBuilder, Terminator};
 
 use error::*;
+use field_type::Type;
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Metadata {
+    pub dialect: Dialect,
+    pub num_fields: usize,
+    pub types: Vec<Type>,
+}
+
+#[derive(Clone)]
+pub struct Dialect {
+    pub delimiter: u8,
+    pub header: Header,
+    pub terminator: Terminator,
+    pub quote: Quote,
+    pub doublequote_escapes: bool,
+    pub escape: Escape,
+    pub comment: Comment,
+    pub flexible: bool,
+}
+impl PartialEq for Dialect {
+    fn eq(&self, other: &Dialect) -> bool {
+        self.delimiter == other.delimiter
+            && self.header == other.header
+            && match (self.terminator, other.terminator) {
+                (Terminator::CRLF, Terminator::CRLF) => true,
+                (Terminator::Any(left), Terminator::Any(right)) => left == right,
+                _ => false
+            }
+            && self.quote == other.quote
+            && self.doublequote_escapes == other.doublequote_escapes
+            && self.escape == other.escape
+            && self.comment == other.comment
+            && self.flexible == other.flexible
+    }
+}
+impl fmt::Debug for Dialect {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("Dialect")
+            .field("delimiter", &char::from(self.delimiter))
+            .field("header", &self.header)
+            .field("terminator", &self.terminator)
+            .field("quote", &self.quote)
+            .field("doublequote_escapes", &self.doublequote_escapes)
+            .field("escape", &self.escape)
+            .field("comment", &self.comment)
+            .field("flexible", &self.flexible)
+            .finish()
+    }
+}
+impl Dialect {
+    // TODO: return  Reader<File> instead
+    pub fn open_path<P: AsRef<Path>>(&self, path: P) -> Result<Reader<BufReader<File>>> {
+        self.open_reader(File::open(path)?)
+    }
+
+    //TODO: return a Reader<R> instead (make sure buf reader consumes properly)
+    pub fn open_reader<R: Read>(&self, rdr: R) -> Result<Reader<BufReader<R>>> {
+        let mut buf_rdr = BufReader::new(rdr);
+        for _ in 0..self.header.num_preamble_rows {
+            let mut devnull = String::new();
+            buf_rdr.read_line(&mut devnull)?;
+        }
+        let bldr: ReaderBuilder = self.clone().into();
+        Ok(bldr.from_reader(buf_rdr))
+    }
+}
+impl From<Dialect> for ReaderBuilder {
+    fn from(dialect: Dialect) -> ReaderBuilder {
+        let mut bldr = ReaderBuilder::new();
+        bldr.delimiter(dialect.delimiter)
+            .has_headers(dialect.header.has_header_row)
+            .terminator(dialect.terminator)
+            .escape(dialect.escape.into())
+            .double_quote(dialect.doublequote_escapes)
+            .comment(dialect.comment.into())
+            .flexible(dialect.flexible);
+
+        match dialect.quote {
+            Quote::Some(character) => {
+                bldr.quoting(true);
+                bldr.quote(character);
+            },
+            Quote::None => {
+                bldr.quoting(false);
+            }
+        }
+
+        bldr
+    }
+}
 
 /// Information about the header of the CSV file.
 #[derive(Debug, Clone, PartialEq)]
@@ -81,99 +172,5 @@ impl fmt::Debug for Comment {
             Comment::Enabled(chr) => write!(f, "Enabled({})", char::from(chr)),
             Comment::Disabled => write!(f, "Disabled")
         }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct Metadata {
-    pub dialect: Dialect,
-    pub num_fields: usize,
-}
-
-#[derive(Clone)]
-pub struct Dialect {
-    pub delimiter: u8,
-    pub header: Header,
-    pub terminator: Terminator,
-    pub quote: Quote,
-    pub doublequote_escapes: bool,
-    pub escape: Escape,
-    pub comment: Comment,
-    pub flexible: bool,
-}
-impl PartialEq for Dialect {
-    fn eq(&self, other: &Dialect) -> bool {
-        self.delimiter == other.delimiter
-            && self.header == other.header
-            && match (self.terminator, other.terminator) {
-                (Terminator::CRLF, Terminator::CRLF) => true,
-                (Terminator::Any(left), Terminator::Any(right)) => left == right,
-                _ => false
-            }
-            && self.quote == other.quote
-            && self.doublequote_escapes == other.doublequote_escapes
-            && self.escape == other.escape
-            && self.comment == other.comment
-            && self.flexible == other.flexible
-    }
-}
-
-
-impl fmt::Debug for Dialect {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.debug_struct("Dialect")
-            .field("delimiter", &char::from(self.delimiter))
-            .field("header", &self.header)
-            .field("terminator", &self.terminator)
-            .field("quote", &self.quote)
-            .field("doublequote_escapes", &self.doublequote_escapes)
-            .field("escape", &self.escape)
-            .field("comment", &self.comment)
-            .field("flexible", &self.flexible)
-            .finish()
-    }
-}
-
-impl Dialect {
-    // TODO: return  Reader<File> instead
-    pub fn open_path<P: AsRef<Path>>(&self, path: P) -> Result<Reader<BufReader<File>>> {
-        self.open_reader(File::open(path)?)
-    }
-
-    //TODO: return a Reader<R> instead (make sure buf reader consumes properly)
-    pub fn open_reader<R: Read>(&self, rdr: R) -> Result<Reader<BufReader<R>>> {
-        let mut buf_rdr = BufReader::new(rdr);
-        for _ in 0..self.header.num_preamble_rows {
-            let mut devnull = String::new();
-            buf_rdr.read_line(&mut devnull)?;
-        }
-        let bldr: ReaderBuilder = self.clone().into();
-        Ok(bldr.from_reader(buf_rdr))
-    }
-}
-
-
-impl From<Dialect> for ReaderBuilder {
-    fn from(dialect: Dialect) -> ReaderBuilder {
-        let mut bldr = ReaderBuilder::new();
-        bldr.delimiter(dialect.delimiter)
-            .has_headers(dialect.header.has_header_row)
-            .terminator(dialect.terminator)
-            .escape(dialect.escape.into())
-            .double_quote(dialect.doublequote_escapes)
-            .comment(dialect.comment.into())
-            .flexible(dialect.flexible);
-
-        match dialect.quote {
-            Quote::Some(character) => {
-                bldr.quoting(true);
-                bldr.quote(character);
-            },
-            Quote::None => {
-                bldr.quoting(false);
-            }
-        }
-
-        bldr
     }
 }
