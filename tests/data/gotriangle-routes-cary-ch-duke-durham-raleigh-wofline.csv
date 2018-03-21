@@ -1,0 +1,132 @@
+municipality,agency_id,route_id,route_short_name,route_long_name,min_headway_minutes,route_url
+chapel hill,243,1730,D - Saturday,Greenbridge - University Place - Eastowne,65,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/d-route-saturday
+chapel hill,243,1736,HS,Morris Grove Elementary-Chapel Hill High-Rogers Rd,30,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/hs-route
+chapel hill,243,1751,T - Saturday,MLK Jr Boulevard-UNC Hospitals,60,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/t-route-saturday
+chapel hill,243,1729,D,Culbreth Road - Franklin Street - Eastowne,20,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/d-route
+chapel hill,243,1725,CL,Colony Lake - Sage Rd - UNC Hospitals,58,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/cl-route
+chapel hill,243,1727,CPX,Carrboro Plaza Express,15,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/cpx-route
+chapel hill,243,1728,CW,Carrboro - Weaver Street,20,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/cw-route
+durham,241,1787,9,Dearborn Drive - Durham Regional - Foxfire - Riverview,60,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1788,9A,Dearborn Drive - Durham Regional - Riverside HS,60,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1763,10,South Square - New Hope Commons,60,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1782,5,Fayetteville St-NCCU-Southpoint,30,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1770,15,TW Alexander - Brier Creek,60,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1767,11,Duke & VA - Hillsborough Rd,30,http://www.gotriangle.org/transit/data-schedules-maps/
+duke,240,1680,LL,LaSalle Loop,20,http://parking.duke.edu/buses_vans/bus_sched/LL_lasalle_loop.php
+wofline,239,1603,8,Southeast Loop,35,http://www2.acs.ncsu.edu/trans/wolfline/schedules.html
+duke,240,1693,C1,East-West,20,http://parking.duke.edu/buses_vans/bus_sched/C1_East_West.php
+durham,241,4507,23,The Village - East Durham Link,60
+raleigh,244,1539,23L,Millbrook Connector,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1526,10,Longview,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+wofline,239,2056,6S,Hillsborough Street West,25,http://www2.acs.ncsu.edu/trans/wolfline/summer.html
+wofline,239,1597,7R,Wolflink Reverse,36,http://www2.acs.ncsu.edu/trans/wolfline/schedules.html
+wofline,239,1604,9,Gorman Street,30,http://www2.acs.ncsu.edu/trans/wolfline/schedules.html
+wofline,239,1598,3,Engineering,24,http://www2.acs.ncsu.edu/trans/wolfline/schedules.html
+wofline,239,1595,10,Centennial,30,http://www2.acs.ncsu.edu/trans/wolfline/schedules.html
+chapel hill,243,1740,JN - Saturday,Estes Park-UNC Hospitals-Jones Ferry Road,75,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/jn-route-saturday
+chapel hill,243,1734,FG - Saturday,Franklin St-University Place-Colony Woods,80,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/fg-route-saturday
+chapel hill,243,1741,N,Estes Park-UNC Hospitals-Family Medicine,30,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/n-route
+chapel hill,243,1739,JFX,Jones Ferry Road Express,15,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/jfx-route
+cary,242,2408,55,Kildaire Farm Road Express,30,http://www.townofcary.org/services-publications/transit/gocary/fixed-route-service
+cary,242,1721,5,Kildaire Farm Road,30,http://www.townofcary.org/services-publications/transit/gocary/fixed-route-service
+cary,242,1720,4,High House Road,30,http://www.townofcary.org/services-publications/transit/gocary/fixed-route-service
+chapel hill,243,1723,A,MLK Jr Blvd - Northside,30,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/a-route
+durham,241,1789,9B,Dearborn Drive - Ben Franklin Boulevard - Northern HS,60,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1791,7,Forest Hills-Weaver Street-MLK Jr Pkwy,30,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1781,4,North Roxboro - North Duke Crossing,30,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1774,1A,Northgate-North Pointe-Loehmanns,60,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1790,BCC,Bull City Connector,15,http://www.gotriangle.org/transit/data-schedules-maps/
+duke,240,5800,SWX,Swift Avenue Express,15,http://parking.duke.edu/buses_vans/bus_sched/
+wofline,239,6286,5S,Varsity,30,http://www2.acs.ncsu.edu/trans/wolfline/schedules.html
+chapel hill,243,1737,HU,UNC Hospitals-Botanical Garden-54 Park-&-Ride-Hedrick Building,39
+durham,241,4510,3T,3Tripper The Village - Glenview Station,60
+raleigh,244,1545,40X,Wake Tech Express,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1530,13,Chavis Heights,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1537,21,Caraleigh,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1548,6,Crabtree,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+wofline,239,1600,5,Varsity,30,http://www2.acs.ncsu.edu/trans/wolfline/schedules.html
+chapel hill,243,1748,Safe Ride J,Franklin Street-Carrboro-Rock Haven Road,15,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/safe-ride-j-route
+chapel hill,243,1742,NS,Eubanks Road-Southern Village,10,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/ns-route
+cary,242,1718,2,Maynard Rd (Counterclockwise),60,http://www.townofcary.org/services-publications/transit/gocary/fixed-route-service
+cary,242,1717,1,Maynard Road (Clockwise),60,http://www.townofcary.org/services-publications/transit/gocary/fixed-route-service
+chapel hill,243,1745,RU,Campus Reverse Shuttle-Law School,10
+chapel hill,243,6830,V - Saturday,Southern Village - Meadowmont,60,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/v-route-saturday
+chapel hill,243,1732,F,Colony Woods - Franklin Street - McDougle School,60,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/f-route
+chapel hill,243,1753,V,Southern Village-Meadowmont,80,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/v-route
+chapel hill,243,1752,U,UNC Campus Shuttle-Downtown,15,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/u-route
+chapel hill,243,1743,NU,RR Lot-UNC Hospitals,45,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/nu-route
+durham,241,1775,1B,Northgate - Guess Road - Willowdale,60,http://www.gotriangle.org/transit/data-schedules-maps/
+duke,240,1681,PR1,Bassett-Research,20,http://parking.duke.edu/buses_vans/bus_sched/PR1_bassett_research.php
+durham,241,1780,3,The Village - Glenview Station,30,http://www.gotriangle.org/transit/data-schedules-maps/
+duke,240,5799,I1,Innovation District Shuttle,40,http://parking.duke.edu/buses_vans/bus_sched/
+chapel hill,243,1746,S,South Campus-NC 54 Park-&-Ride,10
+raleigh,244,1551,7L,Carolina Pines Connector,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1528,11L,Buck Jones Connector,60,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1524,1,Capital Blvd,15,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1533,16,Oberlin,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1542,3,Glascock,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1529,12,Method,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+durham,241,1777,2,East Durham-Angier Ave,60,http://www.gotriangle.org/transit/data-schedules-maps/
+wofline,239,1596,11,Village Link,30,http://www2.acs.ncsu.edu/trans/wolfline/schedules.html
+durham,241,4508,3B,The Village-Highway 98-Southern High School,60
+durham,241,4506,20,Woodcroft - South Square - Duke & VA Limited,30
+durham,241,1762,1,Northgate-North Pointe-Croasdaile Crossings-Willowdale,60,http://www.gotriangle.org/transit/data-schedules-maps/
+raleigh,244,1535,19,Apollo Heights,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1536,2,Falls of Neuse,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+durham,241,1784,6,Duke & VA Hospitals-American Village,60,http://www.gotriangle.org/transit/data-schedules-maps/
+raleigh,244,1538,22,State Street,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+durham,241,1764,10A,South Square - New Hope Commons,60,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1785,6B,Duke & VA Hospitals-Sparger Rd,60,http://www.gotriangle.org/transit/data-schedules-maps/
+wofline,239,1607,16,Werewolf Shuttle,30,http://www2.acs.ncsu.edu/trans/wolfline/night.html
+wofline,239,1594,1,Avent Ferry,40,http://www2.acs.ncsu.edu/trans/wolfline/schedules.html
+wofline,239,3282,13,Wolfprowl,35,http://www2.acs.ncsu.edu/trans/wolfline/wolfprowl.html
+chapel hill,243,1747,Safe Ride G,Franklin Street-Finley Forest-Meadowmont,60,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/safe-ride-g-route
+chapel hill,243,1738,J,Carrboro-Downtown Chapel Hill-Jones Ferry Road,15,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/j-route
+raleigh,244,1553,R-Line,Free Downtown Circulator,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1550,70X,Brier Creek Express,60,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1547,55X,Poole Road Express,60,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1546,5,Biltmore Hills,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1549,7,South Saunders,15,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1552,8,Six Forks,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+chapel hill,243,1750,T,MLK Jr Boulevard-UNC Hospitals,30,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/t-route
+cary,242,1722,6,Buck Jones Road,30,http://www.townofcary.org/services-publications/transit/gocary/fixed-route-service
+chapel hill,243,1726,CM,Carrboro-Merritt Mill Road-Family Medicine,30,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/cm-route
+duke,240,4926,C2,East-Central-West,35,http://parking.duke.edu/buses_vans/bus_sched/CCX_central_campus_express.php
+duke,240,1679,H6,Remote Lot-Hospital,24,http://parking.duke.edu/buses_vans/bus_sched/H6_remote_lot_hosptial.php
+durham,241,1783,5K,Fayetteville Street Tripper,30,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1778,2A,East Durham-Angier Ave,60,http://www.gotriangle.org/transit/data-schedules-maps/
+duke,240,1683,H2,Hospital Loop,10,http://parking.duke.edu/buses_vans/bus_sched/H2_hospital_loop.php
+duke,240,1682,C4,Central-West,15,http://parking.duke.edu/buses_vans/bus_sched/C4_Central_West.php
+durham,241,1768,12,NCCU - Hwy 54 & 55,60,http://www.gotriangle.org/transit/data-schedules-maps/
+duke,240,1690,H5,Broad-Erwin,45,http://parking.duke.edu/buses_vans/bus_sched/H5_broad_erwin.php
+durham,241,4723,NHS,Northern High School Tripper,
+chapel hill,243,6821,B,Baity Hill - UNC Hospitals - Fetzer Gym,20,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/b-route
+chapel hill,243,1735,G,Booker Creek-University Place-UNC Hospitals,98
+chapel hill,243,1749,Safe Ride T,Franklin Street-MLK Jr Boulevard-Timberlyne,30,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/safe-ride-t-route
+chapel hill,243,1733,FCX,Friday Center Express,5,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/fcx-route
+chapel hill,243,1724,CCX,Chatham County Express,15,http://www.townofchapelhill.org/town-hall/departments-services/transit/routes-schedules/all-routes-schedules/ccx-route
+duke,240,1686,CSW,Smith Warehouse,20,http://parking.duke.edu/buses_vans/bus_sched/CSW_smith_warehouse.php
+duke,240,1689,CCX,Central Campus Express,30,http://parking.duke.edu/buses_vans/bus_sched/CCX_central_campus_express.php
+duke,240,1684,C5,Central-East,20,http://parking.duke.edu/buses_vans/bus_sched/c5_central_east.php
+duke,240,3314,C3,Class Change,25,http://parking.duke.edu/buses_vans/bus_sched/C3_east_science.php
+duke,240,1685,C3,East-Science,35,http://parking.duke.edu/buses_vans/bus_sched/C3_east_science.php
+durham,241,1779,2B,East Durham-The Village,60,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1769,14,Hwy 54 & 55 - Southpoint,60,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,1786,8,Lawson Street - NCCU - Durham Tech,30,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,4731,12B,NCCU - Hwy 54 & 55,60
+durham,241,1765,10B,South Square - Pickett Rd,30,http://www.gotriangle.org/transit/data-schedules-maps/
+durham,241,4509,3C,The Village - Highway 98 - Rummel Street,60
+wofline,239,1606,12,Night Wolf,35,http://www2.acs.ncsu.edu/trans/wolfline/night.html
+wofline,239,1602,7,Wolflink Shuttle,24,http://www2.acs.ncsu.edu/trans/wolfline/schedules.html
+wofline,239,1601,6,Carter Finley,30,http://www2.acs.ncsu.edu/trans/wolfline/schedules.html
+wofline,239,1605,14,Centennial Night,40,http://www2.acs.ncsu.edu/trans/wolfline/night.html
+wofline,239,3562,17,RS Lot Shuttle,30,http://www2.acs.ncsu.edu/trans/maps/map-holiday-sunday-shuttle.pdf
+raleigh,244,1527,11,Avent Ferry,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1531,15,WakeMed,15,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1532,15L,Trawick Connector,45,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1534,18,Worthdale,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1540,24L,North Crosstown Connector,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1541,25L,Triangle Town Link,60,http://www.raleighnc.gov/services/content/PWksTransit/Articles/Route25L.html
+raleigh,244,1554,WFL,Wake Forest Loop,60,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+raleigh,244,1544,4,Rex Hospital,30,http://www.raleighnc.gov/home/content/PWksTransit/Articles/CATBusRoutes.html
+cary,242,1719,3,Harrison Avenue,30,http://www.townofcary.org/services-publications/transit/gocary/fixed-route-service
