@@ -1,3 +1,5 @@
+use std::fmt;
+
 use csv::StringRecord;
 
 bitflags! {
@@ -61,4 +63,15 @@ pub enum Type {
 }
 pub fn get_best_types(guesses: Vec<TypeGuesses>) -> Vec<Type> {
     guesses.iter().map(|guess| guess.best()).collect()
+}
+impl fmt::Display for Type {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", match *self {
+            Type::Unsigned => "Unsigned",
+            Type::Signed   => "Signed",
+            Type::Text     => "Text",
+            Type::Boolean  => "Boolean",
+            Type::Float    => "Float",
+        })
+    }
 }

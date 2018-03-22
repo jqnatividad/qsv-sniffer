@@ -14,6 +14,19 @@ pub struct Metadata {
     pub num_fields: usize,
     pub types: Vec<Type>,
 }
+impl fmt::Display for Metadata {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Metadata")?;
+        writeln!(f, "========")?;
+        writeln!(f, "{}", self.dialect)?;
+        writeln!(f, "Number of fields: {}", self.num_fields)?;
+        writeln!(f, "Types:")?;
+        for (i, ty) in self.types.iter().enumerate() {
+            writeln!(f, "\t{}: {}", i, ty)?;
+        }
+        Ok(())
+    }
+}
 
 #[derive(Clone)]
 pub struct Dialect {
@@ -54,6 +67,29 @@ impl fmt::Debug for Dialect {
             .field("comment", &self.comment)
             .field("flexible", &self.flexible)
             .finish()
+    }
+}
+impl fmt::Display for Dialect {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "Dialect:")?;
+        writeln!(f, "\tDelimiter: {}", char::from(self.delimiter))?;
+        writeln!(f, "\tHas header row?: {}", self.header.has_header_row)?;
+        writeln!(f, "\tNumber of preamble rows: {}", self.header.num_preamble_rows)?;
+        writeln!(f, "\tQuote character: {}", match self.quote {
+            Quote::Some(chr) => format!("{}", char::from(chr)),
+            Quote::None => "none".into()
+        })?;
+        writeln!(f, "\tDouble-quote escapes?: {}", self.doublequote_escapes)?;
+        writeln!(f, "\tEscape character: {}", match self.escape {
+            Escape::Enabled(chr) => format!("{}", char::from(chr)),
+            Escape::Disabled => "none".into(),
+
+        })?;
+        writeln!(f, "\tComment character: {}", match self.comment {
+            Comment::Enabled(chr) => format!("{}", char::from(chr)),
+            Comment::Disabled => "none".into()
+        })?;
+        writeln!(f, "\tFlexible: {}", self.flexible)
     }
 }
 impl Dialect {
