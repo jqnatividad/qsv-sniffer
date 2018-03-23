@@ -1,7 +1,11 @@
 [package]
 name = "csv-sniffer"
+description = "A CSV file format sniffer for Rust"
 version = "0.1.0"
 authors = ["Jamie Blondin <jblondin@gmail.com>"]
+license-file = "LICENSE"
+repository = "https://github.com/jblondin/csv-sniffer"
+exclude = ["tests/data/*"]
 
 [dependencies]
 csv-core = "0.1.4"
