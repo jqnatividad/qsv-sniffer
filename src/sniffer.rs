@@ -15,7 +15,7 @@ use sample::{take_sample_from_start, SampleSize, SampleIter};
 
 /// A CSV sniffer.
 ///
-/// The sniffer examine a CSV file, passed in either through a file or a reader.
+/// The sniffer examines a CSV file, passed in either through a file or a reader.
 #[derive(Debug, Default)]
 pub struct Sniffer {
     // CSV file dialect guesses

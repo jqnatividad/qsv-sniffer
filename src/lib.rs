@@ -11,8 +11,8 @@ The [`Sniffer`](struct.Sniffer.html) type is the primary entry point for using t
 
 Alternatively, the [`Sniffer::sniff_path`](struct.Sniffer.html#method.sniff_path) and
 [`Sniffer::sniff_reader`](struct.Sniffer.html#method.sniff_reader) methods return a
-[`Metadata`](struct.Metadata.html) object containing the deduced details about the underlying
-CSV input.
+[`Metadata`](metadata/struct.Metadata.html) object containing the deduced details about the
+underlying CSV input.
 
 This sniffer detects the following metadata about a CSV file:
 
@@ -26,7 +26,7 @@ in data files to introduce the data)
 each row)
 * Types -- the inferred data type of each field in the data table
 
-See [`Metadata`](struct.Metadata.html) for full information about what the sniffer returns.
+See [`Metadata`](metadata/struct.Metadata.html) for full information about what the sniffer returns.
 
 # Setup
 
