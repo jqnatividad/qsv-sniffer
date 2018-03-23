@@ -13,6 +13,9 @@ use chain::*;
 use field_type::{infer_record_types, infer_types, get_best_types, Type, TypeGuesses};
 use sample::{take_sample_from_start, SampleSize, SampleIter};
 
+/// A CSV sniffer.
+///
+/// The sniffer examine a CSV file, passed in either through a file or a reader.
 #[derive(Debug, Default)]
 pub struct Sniffer {
     // CSV file dialect guesses
@@ -28,9 +31,6 @@ pub struct Sniffer {
 
     // sample size to sniff
     sample_size: Option<SampleSize>,
-
-    // state during sniffing
-    max_line_length: usize,
 }
 impl Sniffer {
     /// Create a new CSV sniffer.
@@ -71,23 +71,39 @@ impl Sniffer {
         self
     }
 
-    pub fn get_sample_size(&self) -> SampleSize {
+    fn get_sample_size(&self) -> SampleSize {
         self.sample_size.clone().unwrap_or(SampleSize::Bytes(1<<14))
     }
 
+    /// Sniff the CSV file located at the provided path, and return a `Reader` (from the
+    /// [`csv`](https://docs.rs/csv) crate) ready to ready the file.
+    ///
+    /// Fails on file opening or readering errors, or on an error examining the file.
     pub fn open_path<P: AsRef<Path>>(&mut self, path: P) -> Result<Reader<BufReader<File>>> {
         self.open_reader(File::open(path)?)
     }
+    /// Sniff the CSV file provided by the reader, and return a [`csv`](https://docs.rs/csv)
+    /// `Reader` object.
+    ///
+    /// Fails on file opening or readering errors, or on an error examining the file.
     pub fn open_reader<R: Read + Seek>(&mut self, mut reader: R) -> Result<Reader<BufReader<R>>> {
         let metadata = self.sniff_reader(&mut reader)?;
         reader.seek(SeekFrom::Start(0))?;
         metadata.dialect.open_reader(reader)
     }
 
+    /// Sniff the CSV file located at the provided path, and return a
+    /// [`Metadata`](struct.Metadata.html) object containing information about the CSV file.
+    ///
+    /// Fails on file opening or readering errors, or on an error examining the file.
     pub fn sniff_path<P: AsRef<Path>>(&mut self, path: P) -> Result<Metadata> {
         let file = File::open(path)?;
         self.sniff_reader(&file)
     }
+    /// Sniff the CSV file provider by the reader, and return a
+    /// [`Metadata`](struct.Metadata.html) object containing information about the CSV file.
+    ///
+    /// Fails on file opening or readering errors, or on an error examining the file.
     pub fn sniff_reader<R: Read + Seek>(&mut self, mut reader: R) -> Result<Metadata> {
 
         // guess quotes & delim

@@ -1,3 +1,6 @@
+/*!
+Error types and conversions for the `csv-sniffer` crate.
+*/
 use std::error::Error;
 use std::io;
 use std::fmt;
@@ -11,9 +14,11 @@ pub enum SnifferError {
     Io(io::Error),
     /// A CSV parsing error (from the csv crate)
     Csv(csv::Error),
+    /// A CSV sniffing error
     SniffingFailed(String),
 }
 
+/// Ease-of-use `Result` type with a `SnifferError`.
 pub type Result<T> = ::std::result::Result<T, SnifferError>;
 
 impl fmt::Display for SnifferError {

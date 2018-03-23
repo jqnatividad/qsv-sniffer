@@ -3,8 +3,10 @@ use std::fmt;
 use csv::StringRecord;
 
 bitflags! {
+    /// Possible guesses for the field type. Implementged as a bitflag struct (see
+    /// [`bitflags`](https://docs.rs/bitflags/)).
     #[derive(Default)]
-    pub struct TypeGuesses: u32 {
+    pub(crate) struct TypeGuesses: u32 {
         const BOOLEAN   = 0b00000001;
         const UNSIGNED  = 0b00000010;
         const SIGNED    = 0b00000100;
@@ -14,7 +16,10 @@ bitflags! {
 }
 
 impl TypeGuesses {
-    pub fn best(&self) -> Type {
+    /// Compute the 'best-fitting' `Type` among the guesses of this struct. 'Best-fitting' in this
+    /// case means the narrowest definition: `Type::Boolean` being the narrowest, and `Type::Text`
+    /// being the widest (since everything can be a text field).
+    pub(crate) fn best(&self) -> Type {
         // if all values are some sort of boolean (0 or 1, or 'true' and 'false'), guess boolean
         if      self.contains(TypeGuesses::BOOLEAN)  { Type::Boolean  }
         // if all values are integer and > 0, guess unsigned
@@ -30,12 +35,12 @@ impl TypeGuesses {
     /// if `self` is TypesGuesses::SIGNED | TypesGuesses::FLOAT | TypeGuesses::TEXT, and `other` is
     /// TypesGuesses::TEXT, then `allows` returns `false` (since self is more restrictive than
     /// other).
-    pub fn allows(&self, other: &TypeGuesses) -> bool {
+    pub(crate) fn allows(&self, other: &TypeGuesses) -> bool {
         !(*self - *other).is_empty()
     }
 }
 
-pub fn infer_types(s: &str) -> TypeGuesses {
+pub(crate) fn infer_types(s: &str) -> TypeGuesses {
     if s.len() == 0 {
         // empty fields can be of any type; or rather, of no known type
         return TypeGuesses::all();
@@ -49,19 +54,25 @@ pub fn infer_types(s: &str) -> TypeGuesses {
     guesses
 }
 
-pub fn infer_record_types(record: &StringRecord) -> Vec<TypeGuesses> {
+pub(crate) fn infer_record_types(record: &StringRecord) -> Vec<TypeGuesses> {
     record.iter().map(|s| infer_types(s)).collect()
 }
 
+/// The valid field types for fields in a CSV record.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Type {
+    /// Unsigned integer (integer >= 0)
     Unsigned,
+    /// Signed integer
     Signed,
+    /// Text (any field can be a type)
     Text,
+    /// Boolean (true / false or 0 / 1)
     Boolean,
+    /// Floating-point
     Float,
 }
-pub fn get_best_types(guesses: Vec<TypeGuesses>) -> Vec<Type> {
+pub(crate) fn get_best_types(guesses: Vec<TypeGuesses>) -> Vec<Type> {
     guesses.iter().map(|guess| guess.best()).collect()
 }
 impl fmt::Display for Type {

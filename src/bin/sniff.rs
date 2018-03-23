@@ -8,6 +8,8 @@ fn main() {
         eprintln!("Usage: {} <file>", args[0]);
         ::std::process::exit(1);
     }
+
+    // sniff the path provided by the first argument
     match csv_sniffer::Sniffer::new().sniff_path(&args[1]) {
         Ok(metadata) => {
             println!("{}", metadata);

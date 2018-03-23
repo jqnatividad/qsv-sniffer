@@ -3,9 +3,8 @@ extern crate csv_sniffer;
 
 use std::path::Path;
 
-use csv_sniffer::{Sniffer, SampleSize};
+use csv_sniffer::{Sniffer, SampleSize, Type};
 use csv_sniffer::metadata::*;
-use csv_sniffer::field_type::Type;
 use csv::Terminator;
 
 #[test]
