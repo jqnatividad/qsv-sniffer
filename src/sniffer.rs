@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::path::Path;
-use std::io::{BufRead, BufReader, Read, Seek, SeekFrom, Take};
+use std::io::{BufReader, Read, Seek, SeekFrom};
 use std::fs::File;
 
 use regex::Regex;
@@ -11,17 +11,7 @@ use metadata::*;
 use error::*;
 use chain::*;
 use field_type::{infer_record_types, infer_types, get_best_types, Type, TypeGuesses};
-
-/// Argument used when calling `sample_size` on `Sniffer`.
-#[derive(Debug, Clone)]
-pub enum SampleSize {
-    /// Use a number of records as the size of the sample to sniff.
-    Records(usize),
-    /// Use a number of bytes as the size of the sample to sniff.
-    Bytes(usize),
-    /// Sniff the entire sample.
-    All
-}
+use sample::{take_sample_from_start, SampleSize, SampleIter};
 
 #[derive(Debug, Default)]
 pub struct Sniffer {
@@ -81,6 +71,10 @@ impl Sniffer {
         self
     }
 
+    pub fn get_sample_size(&self) -> SampleSize {
+        self.sample_size.clone().unwrap_or(SampleSize::Bytes(1<<14))
+    }
+
     pub fn open_path<P: AsRef<Path>>(&mut self, path: P) -> Result<Reader<BufReader<File>>> {
         self.open_reader(File::open(path)?)
     }
@@ -136,24 +130,6 @@ impl Sniffer {
         })
     }
 
-    fn take_sample_from_start<'a, R: Read + Seek>(&self, reader: &'a mut R)
-        -> Result<Take<&'a mut R>>
-    {
-        reader.seek(SeekFrom::Start(0))?;
-        self.take_sample(reader)
-    }
-    fn take_sample<'a, R: Read>(&self, reader: &'a mut R) -> Result<Take<&'a mut R>> {
-        let sample_size = self.sample_size.clone().unwrap_or(SampleSize::Bytes(1<<14));
-        let nbytes = match sample_size {
-            SampleSize::Bytes(nbytes) => nbytes,
-            SampleSize::Records(_) => {
-                return Err(SnifferError::SniffingFailed(
-                    "SampleSize::Records unimplemented".to_string()));
-            },
-            SampleSize::All => 1e9 as usize,
-        };
-        Ok(reader.take(nbytes as u64))
-    }
     // Infers quotes and delimiter from quoted (or possibly quoted) files. If quotes detected,
     // updates self.quote and self.delimiter. If quotes not detected, updates self.quote to
     // Quote::None. Only valid quote characters: " (double-quote), ' (single-quote), ` (back-tick).
@@ -177,7 +153,7 @@ impl Sniffer {
             Ok((b'"', (0, b'\0'))),
             |acc: Result<(u8, (usize, u8))>, &chr| {
                 if let Ok(acc) = acc {
-                    let mut sample_reader = self.take_sample_from_start(reader)?;
+                    let mut sample_reader = take_sample_from_start(reader, self.get_sample_size())?;
                     if let Some((cnt, delim_chr)) = quote_count(&mut sample_reader,
                         char::from(chr), &self.delimiter)?
                     {
@@ -205,8 +181,7 @@ impl Sniffer {
         // unwraps for delimiter and quote are safe
         let (quote, delim) = (self.quote.clone().unwrap(), self.delimiter.unwrap());
 
-        let sample_reader = self.take_sample_from_start(reader)?;
-        let buf_reader = BufReader::new(sample_reader);
+        let sample_iter = take_sample_from_start(reader, self.get_sample_size())?;
 
         let mut chain = Chain::default();
 
@@ -219,7 +194,7 @@ impl Sniffer {
 
             let mut output = vec![];
             let mut ends = vec![];
-            for line in buf_reader.lines() {
+            for line in sample_iter {
                 let line = line?;
                 if line.len() > output.len() { output.resize(line.len(), 0); }
                 if line.len() > ends.len() { ends.resize(line.len(), 0); }
@@ -233,13 +208,12 @@ impl Sniffer {
                     },
                     _ => {} // non-error results, do nothing
                 }
-                // n_ends is the number of fields, the number of delimiters would be one less than
-                // this
-                let freq = n_ends - 1;
-                chain.add_observation(freq);
+                // n_ends is the number of barries between fields, so it's the same as the number
+                // of delimiters
+                chain.add_observation(n_ends);
             }
         } else {
-            for line in buf_reader.lines() {
+            for line in sample_iter {
                 let line = line?;
                 let freq = line.as_bytes().iter().filter(|&&c| c == delim).count();
                 chain.add_observation(freq);
@@ -251,12 +225,11 @@ impl Sniffer {
     // Updates delimiter, delimiter frequency, number of preamble rows, and flexible boolean.
     fn infer_delim_preamble<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()>
     {
-        let sample_reader = self.take_sample_from_start(reader)?;
-        let buf_reader = BufReader::new(sample_reader);
+        let sample_iter = take_sample_from_start(reader, self.get_sample_size())?;
 
         const NUM_ASCII_CHARS: usize = 128;
         let mut chains = vec![Chain::default(); NUM_ASCII_CHARS];
-        for line in buf_reader.lines() {
+        for line in sample_iter {
             let line = line?;
             let mut freqs = [0; NUM_ASCII_CHARS];
             for &chr in line.as_bytes() {
@@ -287,12 +260,6 @@ impl Sniffer {
                 let (_, _, best_state, _, best_state_prob) = acc;
                 let ViterbiResults { max_delim_freq, path } = chain.viterbi();
                 let (final_state, final_viter) = path[path.len() - 1];
-                // println!("{} '{}' {} {:e}", i, i as u8 as char, final_state, final_viter.prob);
-                // if i as u8 == b'8' {
-                //     for &(state, viter) in &path {
-                //         println!("{} {:e} {:?}", state, viter.prob, viter.prev);
-                //     }
-                // }
                 if final_state < best_state
                     || (final_state == best_state && final_viter.prob > best_state_prob)
                 {
@@ -335,7 +302,6 @@ impl Sniffer {
         // unwraps is safe
         let field_count = self.delimiter_freq.unwrap() + 1;
 
-
         let mut csv_reader = self.create_csv_reader(reader)?;
         let mut records_iter = csv_reader.records();
 
@@ -351,7 +317,8 @@ impl Sniffer {
 
         let mut count = 0;
         for record in records_iter {
-            for (i, field) in record?.iter().enumerate() {
+            let record = record?;
+            for (i, field) in record.iter().enumerate() {
                 row_types[i] &= infer_types(field);
             }
             count += 1;
@@ -375,14 +342,15 @@ impl Sniffer {
     }
 
     fn create_csv_reader<'a, R: Read + Seek>(&self, reader: &'a mut R)
-        -> Result<Reader<BufReader<Take<&'a mut R>>>>
+        -> Result<Reader<BufReader<&'a mut R>>>
     {
-        let sample_reader = self.take_sample_from_start(reader)?;
-        let mut buf_reader = BufReader::new(sample_reader);
+        let mut sample_reader = take_sample_from_start(reader, self.get_sample_size())?;
+
         if let Some(num_preamble_rows) = self.num_preamble_rows {
             for _ in 0..num_preamble_rows {
-                let mut devnull = String::new();
-                buf_reader.read_line(&mut devnull)?;
+                if sample_reader.next().is_none() {
+                    break;
+                }
             }
         }
 
@@ -401,15 +369,14 @@ impl Sniffer {
         }
         if let Some(flexible) = self.flexible { builder.flexible(flexible); }
 
-        Ok(builder.from_reader(buf_reader))
+        Ok(builder.from_reader(sample_reader.into_inner()))
     }
 
 }
 
-fn quote_count<R: Read>(reader: &mut R, character: char, delim: &Option<u8>)
+fn quote_count<R: Read>(sample_iter: &mut SampleIter<R>, character: char, delim: &Option<u8>)
     -> Result<Option<(usize, u8)>>
 {
-    let mut buf_reader = BufReader::new(reader);
     let pattern = match *delim {
         Some(delim) => format!(r#"{}\s*?{}\s*{}"#, character, delim, character),
         None => format!(r#"{}\s*?(?P<delim>[^\w\n'"`])\s*{}"#, character, character)
@@ -420,13 +387,9 @@ fn quote_count<R: Read>(reader: &mut R, character: char, delim: &Option<u8>)
     // search of the values at the end). Consider other options
     let mut delim_count_map: HashMap<String, usize> = HashMap::new();
     let mut count = 0;
-    loop {
-        let mut buf = String::new();
-        let read = buf_reader.read_line(&mut buf)?;
-        if read == 0 {
-            break;
-        }
-        for cap in re.captures_iter(&mut buf) {
+    for line in sample_iter {
+        let mut line = line?;
+        for cap in re.captures_iter(&mut line) {
             count += 1;
             // if we already know delimiter, we don't need to count
             if let Some(_) = *delim {} else {

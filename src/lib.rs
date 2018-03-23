@@ -11,6 +11,9 @@ pub mod error;
 pub(crate) mod chain;
 
 mod sniffer;
-pub use sniffer::{Sniffer, SampleSize};
+pub use sniffer::Sniffer;
+
+pub mod sample;
+pub use sample::SampleSize;
 
 pub mod field_type;
