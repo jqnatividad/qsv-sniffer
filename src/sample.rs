@@ -42,9 +42,6 @@ impl<'a, R: Read> SampleIter<'a, R> {
             is_done: false,
         }
     }
-    pub fn into_inner(self) -> BufReader<&'a mut R> {
-        self.reader
-    }
 }
 
 impl<'a, R: Read> Iterator for SampleIter<'a, R> {

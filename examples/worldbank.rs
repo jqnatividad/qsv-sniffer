@@ -22,5 +22,6 @@ fn main() {
     for result in reader.records() {
         let record = result.unwrap();
         println!("{:?}", record);
+        break;
     }
 }

@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 use std::path::Path;
-use std::io::{BufReader, Read, Seek, SeekFrom};
+use std::io::{Read, Seek, SeekFrom};
 use std::fs::File;
 
 use regex::Regex;
-use csv::{self, Reader, Terminator};
+use csv::{self, Reader, Terminator, StringRecord};
 use csv_core as csvc;
 
 use metadata::*;
@@ -12,6 +12,7 @@ use error::*;
 use chain::*;
 use field_type::{infer_record_types, infer_types, get_best_types, Type, TypeGuesses};
 use sample::{take_sample_from_start, SampleSize, SampleIter};
+use snip::snip_preamble;
 
 /// A CSV sniffer.
 ///
@@ -48,11 +49,6 @@ impl Sniffer {
         self.has_header_row = Some(header.has_header_row);
         self
     }
-    // /// Specify the record terminator symbol.
-    // pub fn terminator(&mut self, terminator: Terminator) -> &mut Sniffer {
-    //     self.terminator = Some(terminator);
-    //     self
-    // }
     /// Specify the quote character (if any), and whether two quotes in a row as to be interepreted
     /// as an escaped quote.
     pub fn quote(&mut self, quote: Quote) -> &mut Sniffer {
@@ -79,14 +75,14 @@ impl Sniffer {
     /// [`csv`](https://docs.rs/csv) crate) ready to ready the file.
     ///
     /// Fails on file opening or readering errors, or on an error examining the file.
-    pub fn open_path<P: AsRef<Path>>(&mut self, path: P) -> Result<Reader<BufReader<File>>> {
+    pub fn open_path<P: AsRef<Path>>(&mut self, path: P) -> Result<Reader<File>> {
         self.open_reader(File::open(path)?)
     }
     /// Sniff the CSV file provided by the reader, and return a [`csv`](https://docs.rs/csv)
     /// `Reader` object.
     ///
     /// Fails on file opening or readering errors, or on an error examining the file.
-    pub fn open_reader<R: Read + Seek>(&mut self, mut reader: R) -> Result<Reader<BufReader<R>>> {
+    pub fn open_reader<R: Read + Seek>(&mut self, mut reader: R) -> Result<Reader<R>> {
         let metadata = self.sniff_reader(&mut reader)?;
         reader.seek(SeekFrom::Start(0))?;
         metadata.dialect.open_reader(reader)
@@ -315,31 +311,45 @@ impl Sniffer {
     fn infer_types<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()> {
         // prerequisites for calling this function:
         assert!(self.delimiter_freq.is_some());
-        // unwraps is safe
+        // unwrap is safe
         let field_count = self.delimiter_freq.unwrap() + 1;
 
         let mut csv_reader = self.create_csv_reader(reader)?;
         let mut records_iter = csv_reader.records();
+        let mut n_bytes = 0;
+        let mut n_records = 0;
+        let sample_size = self.get_sample_size();
 
         // Infer types for the top row. We'll save this set of types to check against the types
         // of the remaining rows to see if this is part of the data or a separate header row.
         let header_row_types = match records_iter.next() {
-            Some(record) => infer_record_types(&record?),
+            Some(record) => {
+                let record = record?;
+                n_records += 1;
+                n_bytes += count_bytes(&record);
+                infer_record_types(&record)
+            },
             None => {
                 return Err(SnifferError::SniffingFailed("CSV empty (after preamble)".into()));
             }
         };
         let mut row_types = vec![TypeGuesses::all(); field_count];
 
-        let mut count = 0;
         for record in records_iter {
             let record = record?;
             for (i, field) in record.iter().enumerate() {
                 row_types[i] &= infer_types(field);
             }
-            count += 1;
+            n_records += 1;
+            n_bytes += count_bytes(&record);
+            // break if we pass sample size limits
+            match sample_size {
+                SampleSize::Records(recs) => { if n_records > recs { break; } }
+                SampleSize::Bytes(bytes) => { if n_bytes > bytes { break; } }
+                SampleSize::All => {}
+            }
         }
-        if count == 0 {
+        if n_records == 1 {
             // there's only one row in the whole data file (the top row already parsed),
             // so we're going to assume it's a data row, not a header row.
             self.has_header_row = Some(false);
@@ -357,17 +367,12 @@ impl Sniffer {
         Ok(())
     }
 
-    fn create_csv_reader<'a, R: Read + Seek>(&self, reader: &'a mut R)
-        -> Result<Reader<BufReader<&'a mut R>>>
+    fn create_csv_reader<'a, R: Read + Seek>(&self, mut reader: &'a mut R)
+        -> Result<Reader<&'a mut R>>
     {
-        let mut sample_reader = take_sample_from_start(reader, self.get_sample_size())?;
-
+        reader.seek(SeekFrom::Start(0))?;
         if let Some(num_preamble_rows) = self.num_preamble_rows {
-            for _ in 0..num_preamble_rows {
-                if sample_reader.next().is_none() {
-                    break;
-                }
-            }
+            snip_preamble(&mut reader, num_preamble_rows)?;
         }
 
         let mut builder = csv::ReaderBuilder::new();
@@ -385,7 +390,7 @@ impl Sniffer {
         }
         if let Some(flexible) = self.flexible { builder.flexible(flexible); }
 
-        Ok(builder.from_reader(sample_reader.into_inner()))
+        Ok(builder.from_reader(reader))
     }
 
 }
@@ -437,4 +442,8 @@ fn quote_count<R: Read>(sample_iter: &mut SampleIter<R>, character: char, delim:
     // delim_count should be nonzero; delim should always match at least something
     assert_ne!(delim_count, 0, "invalid regex match: no delimiter found");
     Ok(Some((count, delim)))
+}
+
+fn count_bytes(record: &StringRecord) -> usize {
+    record.iter().fold(0, |acc, field| { acc + field.len() })
 }

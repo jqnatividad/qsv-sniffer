@@ -87,6 +87,7 @@ extern crate csv;
 extern crate csv_core;
 extern crate regex;
 #[macro_use] extern crate bitflags;
+extern crate memchr;
 
 pub mod metadata;
 pub mod error;
@@ -100,3 +101,5 @@ pub use sample::SampleSize;
 
 pub(crate) mod field_type;
 pub use field_type::Type;
+
+mod snip;
