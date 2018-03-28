@@ -4,8 +4,10 @@ use memchr;
 
 use error::*;
 
-pub(crate) fn snip_preamble<R: Read + Seek>(mut reader: R, n_preamble_rows: usize) -> Result<()> {
-    let mut seek_point = 0;
+pub(crate) fn preamble_skipcount<R: Read>(reader: &mut R, n_preamble_rows: usize)
+    -> Result<usize>
+{
+    let mut skipcount = 0;
     loop {
         let cap = 1 << 12;
         let mut buffer = Vec::with_capacity(cap);
@@ -25,12 +27,17 @@ pub(crate) fn snip_preamble<R: Read + Seek>(mut reader: R, n_preamble_rows: usiz
             }
         }
         if found {
-            seek_point += crlf_pos;
+            skipcount += crlf_pos;
             break;
         } else {
-            seek_point += cap.min(n_read);
+            skipcount += cap.min(n_read);
         }
     }
+    Ok(skipcount)
+}
+
+pub(crate) fn snip_preamble<R: Read + Seek>(mut reader: R, n_preamble_rows: usize) -> Result<()> {
+    let seek_point = preamble_skipcount(&mut reader, n_preamble_rows)?;
     reader.seek(SeekFrom::Start(seek_point as u64))?;
     Ok(())
 }
