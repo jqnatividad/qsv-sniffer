@@ -57,9 +57,7 @@ impl Sniffer {
     }
 
     /// The size of the sample to examine while sniffing. If using `SampleSize::Records`, the
-    /// sniffer will use the value provided with `terminator()` (or `Terminator::CRLF` if no
-    /// terminator is provided). Thus, `SampleSize::Records` may work unexpectedly for
-    /// non-CRLF-terminated files if the terminator is not provided.
+    /// sniffer will use the `Terminator::CRLF` as record separator.
     ///
     /// The sample size defaults to `SampleSize::Bytes(4096)`.
     pub fn sample_size(&mut self, sample_size: SampleSize) -> &mut Sniffer {

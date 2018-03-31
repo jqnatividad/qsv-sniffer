@@ -62,6 +62,7 @@ impl<'a, R: Read> Iterator for SampleIter<'a, R> {
         let last_byte = (output.as_ref() as &[u8])[output.len() - 1];
         if last_byte != b'\n' && last_byte != b'\r' {
             // non CR/LF-ended line
+            // line was cut off before ending, so we ignore it!
             self.is_done = true;
             return None;
         } else {

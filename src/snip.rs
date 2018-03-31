@@ -7,6 +7,9 @@ use error::*;
 pub(crate) fn preamble_skipcount<R: Read>(reader: &mut R, n_preamble_rows: usize)
     -> Result<usize>
 {
+    if n_preamble_rows == 0 {
+        return Ok(0);
+    }
     let mut skipcount = 0;
     loop {
         let cap = 1 << 12;
