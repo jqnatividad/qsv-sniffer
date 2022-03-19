@@ -66,7 +66,7 @@ impl Sniffer {
     }
 
     fn get_sample_size(&self) -> SampleSize {
-        self.sample_size.clone().unwrap_or(SampleSize::Bytes(1<<14))
+        self.sample_size.unwrap_or(SampleSize::Bytes(1<<14))
     }
 
     /// Sniff the CSV file located at the provided path, and return a `Reader` (from the
@@ -176,12 +176,13 @@ impl Sniffer {
                 }
             }
         )?;
-        Ok(if quote_cnt == 0 {
+        if quote_cnt == 0 {
             self.quote = Some(Quote::None);
         } else {
             self.quote = Some(Quote::Some(quote_chr));
             self.delimiter = Some(delim_guess);
-        })
+        };
+        Ok(())
     }
 
     // Updates delimiter frequency, number of preamble rows, and flexible boolean.
@@ -411,7 +412,7 @@ fn quote_count<R: Read>(sample_iter: &mut SampleIter<R>, character: char, delim:
         for cap in re.captures_iter(&mut line) {
             count += 1;
             // if we already know delimiter, we don't need to count
-            if let Some(_) = *delim {} else {
+            if delim.is_some() {} else {
                 *delim_count_map.entry(cap["delim"].to_string()).or_insert(0) += 1;
             }
         }

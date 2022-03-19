@@ -40,7 +40,7 @@ impl Error for SnifferError {
         }
     }
 
-    fn cause(&self) -> Option<&Error> {
+    fn cause(&self) -> Option<&dyn Error> {
         match *self {
             SnifferError::Io(ref err) => Some(err),
             SnifferError::Csv(ref err) => Some(err),

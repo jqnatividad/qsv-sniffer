@@ -41,21 +41,21 @@ impl TypeGuesses {
 }
 
 pub(crate) fn infer_types(s: &str) -> TypeGuesses {
-    if s.len() == 0 {
+    if s.is_empty() {
         // empty fields can be of any type; or rather, of no known type
         return TypeGuesses::all();
     }
     let mut guesses = TypeGuesses::default();
     guesses |= TypeGuesses::TEXT;
-    if let Ok(_) = s.parse::<u64>() { guesses |= TypeGuesses::UNSIGNED; }
-    if let Ok(_) = s.parse::<i64>() { guesses |= TypeGuesses::SIGNED; }
-    if let Ok(_) = s.parse::<bool>() { guesses |= TypeGuesses::BOOLEAN; }
-    if let Ok(_) = s.parse::<f64>() { guesses |= TypeGuesses::FLOAT; }
+    if s.parse::<u64>().is_ok() { guesses |= TypeGuesses::UNSIGNED; }
+    if s.parse::<i64>().is_ok() { guesses |= TypeGuesses::SIGNED; }
+    if s.parse::<bool>().is_ok() { guesses |= TypeGuesses::BOOLEAN; }
+    if s.parse::<f64>().is_ok() { guesses |= TypeGuesses::FLOAT; }
     guesses
 }
 
 pub(crate) fn infer_record_types(record: &StringRecord) -> Vec<TypeGuesses> {
-    record.iter().map(|s| infer_types(s)).collect()
+    record.iter().map(infer_types).collect()
 }
 
 /// The valid field types for fields in a CSV record.

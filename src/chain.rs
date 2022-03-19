@@ -36,7 +36,7 @@ impl Chain {
         self.observations.push(obs);
     }
     pub(crate) fn viterbi(&mut self) -> ViterbiResults {
-        if self.observations.len() == 0 {
+        if self.observations.is_empty() {
             return ViterbiResults { max_delim_freq: 0, path: vec![] };
         }
         // compute the max frequency value; unwrap is safe, we just checked if vector is empty
@@ -149,6 +149,6 @@ impl Chain {
             path.push((prev_state, iterations[(t + 1) as usize][prev_state]));
         }
         path.reverse();
-        ViterbiResults { max_delim_freq: max_value, path: path }
+        ViterbiResults { max_delim_freq: max_value, path }
     }
 }

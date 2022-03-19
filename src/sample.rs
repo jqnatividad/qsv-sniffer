@@ -36,7 +36,7 @@ impl<'a, R: Read> SampleIter<'a, R> {
         let buf_reader = BufReader::new(reader);
         SampleIter {
             reader: buf_reader,
-            sample_size: sample_size,
+            sample_size,
             n_bytes: 0,
             n_records: 0,
             is_done: false,
