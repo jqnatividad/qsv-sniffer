@@ -408,8 +408,8 @@ fn quote_count<R: Read>(sample_iter: &mut SampleIter<R>, character: char, delim:
     let mut delim_count_map: HashMap<String, usize> = HashMap::new();
     let mut count = 0;
     for line in sample_iter {
-        let mut line = line?;
-        for cap in re.captures_iter(&mut line) {
+        let line = line?;
+        for cap in re.captures_iter(&line) {
             count += 1;
             // if we already know delimiter, we don't need to count
             if delim.is_some() {} else {
