@@ -5,7 +5,7 @@ exclude = ["tests/data/*"]
 license-file = "LICENSE"
 name = "csv-sniffer"
 repository = "https://github.com/jblondin/csv-sniffer"
-version = "0.2"
+version = "0.2.0"
 
 [dependencies]
 bitflags = "1"
