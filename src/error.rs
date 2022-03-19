@@ -32,15 +32,7 @@ impl fmt::Display for SnifferError {
 }
 
 impl Error for SnifferError {
-    fn description(&self) -> &str {
-        match *self {
-            SnifferError::Io(ref err) => err.description(),
-            SnifferError::Csv(ref err) => err.description(),
-            SnifferError::SniffingFailed(ref s) => s,
-        }
-    }
-
-    fn cause(&self) -> Option<&Error> {
+    fn cause(&self) -> Option<&dyn Error> {
         match *self {
             SnifferError::Io(ref err) => Some(err),
             SnifferError::Csv(ref err) => Some(err),

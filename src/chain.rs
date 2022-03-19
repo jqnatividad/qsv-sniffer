@@ -10,16 +10,9 @@ pub(crate) const OBS_MAXVALUE: usize = 0;
 pub(crate) const OBS_OTHER: usize = 1;
 pub(crate) const OBS_ZERO: usize = 2;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, Clone)]
 pub(crate) struct Chain {
     observations: Vec<usize>,
-}
-impl Default for Chain {
-    fn default() -> Chain {
-        Chain {
-            observations: vec![],
-        }
-    }
 }
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct VIteration {
@@ -36,7 +29,7 @@ impl Chain {
         self.observations.push(obs);
     }
     pub(crate) fn viterbi(&mut self) -> ViterbiResults {
-        if self.observations.len() == 0 {
+        if self.observations.is_empty() {
             return ViterbiResults { max_delim_freq: 0, path: vec![] };
         }
         // compute the max frequency value; unwrap is safe, we just checked if vector is empty
@@ -89,16 +82,16 @@ impl Chain {
             }
         };
 
-        let mut iterations = vec![];
-        iterations.push(vec![]);
-        for state_idx in 0..N_STATES {
+        let mut iterations: Vec<Vec<VIteration>> = vec![vec![]];
+        for prob_val in start_prob.iter().take(N_STATES) {
             iterations[0].push(VIteration {
-                prob: start_prob[state_idx],
+                prob: *prob_val,
                 prev: None,
             });
             // print!("{:>30e},{}", iterations[0][iterations[0].len() - 1].prob, " ");
         }
         // println!();
+        
         for t in 0..self.observations.len() {
             // since we start with iterations already at length 1, the index of this newly-pushed
             // vector will be t + 1.
@@ -149,6 +142,6 @@ impl Chain {
             path.push((prev_state, iterations[(t + 1) as usize][prev_state]));
         }
         path.reverse();
-        ViterbiResults { max_delim_freq: max_value, path: path }
+        ViterbiResults { max_delim_freq: max_value, path }
     }
 }

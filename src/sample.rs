@@ -13,15 +13,13 @@ pub enum SampleSize {
     All
 }
 
-pub fn take_sample_from_start<'a, R: Read + Seek>(reader: &'a mut R, sample_size: SampleSize)
-    -> Result<SampleIter<R>>
+pub fn take_sample_from_start<R>(reader: &mut R, sample_size: SampleSize)
+    -> Result<SampleIter<R>> where R: Read + Seek
 {
     reader.seek(SeekFrom::Start(0))?;
-    Ok(take_sample(reader, sample_size))
+    Ok(SampleIter::new(reader, sample_size))
 }
-pub fn take_sample<'a, R: Read>(reader: &'a mut R, sample_size: SampleSize) -> SampleIter<R> {
-    SampleIter::new(reader, sample_size)
-}
+
 
 pub struct SampleIter<'a, R: 'a + Read> {
     reader: BufReader<&'a mut R>,
@@ -36,7 +34,7 @@ impl<'a, R: Read> SampleIter<'a, R> {
         let buf_reader = BufReader::new(reader);
         SampleIter {
             reader: buf_reader,
-            sample_size: sample_size,
+            sample_size,
             n_bytes: 0,
             n_records: 0,
             is_done: false,

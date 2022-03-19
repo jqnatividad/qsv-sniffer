@@ -13,7 +13,7 @@ pub(crate) fn preamble_skipcount<R: Read>(reader: &mut R, n_preamble_rows: usize
     let mut skipcount = 0;
     loop {
         let cap = 1 << 12;
-        let mut buffer = Vec::with_capacity(cap);
+        let mut buffer = vec![0; cap];
         unsafe { buffer.set_len(cap); }
         let n_read = reader.read(&mut buffer)?;
         let mut crlf_pos = 0;
