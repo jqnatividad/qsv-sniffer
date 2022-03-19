@@ -10,16 +10,9 @@ pub(crate) const OBS_MAXVALUE: usize = 0;
 pub(crate) const OBS_OTHER: usize = 1;
 pub(crate) const OBS_ZERO: usize = 2;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, Clone)]
 pub(crate) struct Chain {
     observations: Vec<usize>,
-}
-impl Default for Chain {
-    fn default() -> Chain {
-        Chain {
-            observations: vec![],
-        }
-    }
 }
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct VIteration {
@@ -89,8 +82,7 @@ impl Chain {
             }
         };
 
-        let mut iterations = vec![];
-        iterations.push(vec![]);
+        let mut iterations: Vec<Vec<VIteration>> = vec![];
         for state_idx in 0..N_STATES {
             iterations[0].push(VIteration {
                 prob: start_prob[state_idx],
