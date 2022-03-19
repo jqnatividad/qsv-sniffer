@@ -1,15 +1,15 @@
 [package]
-name = "csv-sniffer"
-description = "A CSV file format sniffer for Rust"
-version = "0.1.1"
 authors = ["Jamie Blondin <jblondin@gmail.com>"]
-license-file = "LICENSE"
-repository = "https://github.com/jblondin/csv-sniffer"
+description = "A CSV file format sniffer for Rust"
 exclude = ["tests/data/*"]
+license-file = "LICENSE"
+name = "csv-sniffer"
+repository = "https://github.com/jblondin/csv-sniffer"
+version = "0.2"
 
 [dependencies]
-csv-core = "0.1"
-csv = "1"
-regex = "1.5"
 bitflags = "1"
+csv = "1"
+csv-core = "0.1"
 memchr = "2"
+regex = "1.5"
