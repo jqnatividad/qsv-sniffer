@@ -83,15 +83,15 @@ impl Chain {
         };
 
         let mut iterations: Vec<Vec<VIteration>> = vec![vec![]];
-        #[allow(clippy::needless_range_loop)]
-        for state_idx in 0..N_STATES {
+        for prob_val in start_prob.iter().take(N_STATES) {
             iterations[0].push(VIteration {
-                prob: start_prob[state_idx],
+                prob: *prob_val,
                 prev: None,
             });
             // print!("{:>30e},{}", iterations[0][iterations[0].len() - 1].prob, " ");
         }
         // println!();
+        
         for t in 0..self.observations.len() {
             // since we start with iterations already at length 1, the index of this newly-pushed
             // vector will be t + 1.
