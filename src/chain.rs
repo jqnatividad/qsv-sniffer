@@ -84,6 +84,7 @@ impl Chain {
 
         let mut iterations: Vec<Vec<VIteration>> = vec![];
         iterations.push(vec![]);
+        #[allow(clippy::needless_range_loop)]
         for state_idx in 0..N_STATES {
             iterations[0].push(VIteration {
                 prob: start_prob[state_idx],
