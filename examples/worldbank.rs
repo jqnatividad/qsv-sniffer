@@ -3,7 +3,6 @@ extern crate csv_sniffer;
 
 use std::path::Path;
 
-use csv::Terminator;
 use csv_sniffer::metadata::*;
 
 fn main() {
@@ -18,10 +17,6 @@ fn main() {
             num_preamble_rows: 4,
         },
         quote: Quote::Some(b'"'),
-        doublequote_escapes: true,
-        comment: Comment::Disabled,
-        escape: Escape::Disabled,
-        terminator: Terminator::CRLF,
         flexible: false,
     };
     let mut reader = dialect.open_path(data_filepath).unwrap();

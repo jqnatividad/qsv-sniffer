@@ -3,7 +3,6 @@ extern crate csv_sniffer;
 
 use std::path::Path;
 
-use csv::Terminator;
 use csv_sniffer::metadata::*;
 use csv_sniffer::{SampleSize, Sniffer, Type};
 
@@ -26,11 +25,7 @@ fn test_semicolon() {
                     has_header_row: true,
                     num_preamble_rows: 0,
                 },
-                terminator: Terminator::CRLF,
                 quote: Quote::None,
-                doublequote_escapes: true,
-                escape: Escape::Disabled,
-                comment: Comment::Disabled,
                 flexible: false
             },
             num_fields: 5,
@@ -64,11 +59,7 @@ fn test_comma() {
                     has_header_row: true,
                     num_preamble_rows: 0,
                 },
-                terminator: Terminator::CRLF,
                 quote: Quote::None,
-                doublequote_escapes: true,
-                escape: Escape::Disabled,
-                comment: Comment::Disabled,
                 flexible: false
             },
             num_fields: 5,
@@ -102,11 +93,7 @@ fn test_flexible() {
                     has_header_row: true,
                     num_preamble_rows: 0,
                 },
-                terminator: Terminator::CRLF,
                 quote: Quote::None,
-                doublequote_escapes: true,
-                escape: Escape::Disabled,
-                comment: Comment::Disabled,
                 flexible: true
             },
             num_fields: 7,

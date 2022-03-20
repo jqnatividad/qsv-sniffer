@@ -3,7 +3,7 @@ use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
 use std::path::Path;
 
-use csv::{self, Reader, StringRecord, Terminator};
+use csv::{self, Reader, StringRecord};
 use csv_core as csvc;
 use regex::Regex;
 
@@ -128,11 +128,7 @@ impl Sniffer {
                     num_preamble_rows: self.num_preamble_rows.unwrap(),
                     has_header_row: self.has_header_row.unwrap(),
                 },
-                terminator: Terminator::CRLF,
                 quote: self.quote.clone().unwrap(),
-                doublequote_escapes: true,
-                escape: Escape::Disabled,
-                comment: Comment::Disabled,
                 flexible: self.flexible.unwrap(),
             },
             num_fields: self.delimiter_freq.unwrap() + 1,
