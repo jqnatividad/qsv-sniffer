@@ -6,7 +6,7 @@ use std::fs::File;
 use std::io::{Read, Seek};
 use std::path::Path;
 
-use csv::{Reader, ReaderBuilder, Terminator};
+use csv::{Reader, ReaderBuilder};
 
 use error::*;
 use field_type::Type;
@@ -41,45 +41,22 @@ impl fmt::Display for Metadata {
 
 /// Dialect-level metadata. This type encapsulates the details to be used to derive a
 /// `ReaderBuilder` object (in the [`csv`](https://docs.rs/csv) crate).
-///
-/// Not all components of this type are currently detected by the sniffer, and may be detected in
-/// the future.
 #[derive(Clone)]
 pub struct Dialect {
-    /// CSV delimiter (field separator). Detected by sniffer.
+    /// CSV delimiter (field separator).
     pub delimiter: u8,
     /// [`Header`](struct.Header.html) subtype (header row boolean and number of preamble rows).
-    /// Detected by sniffer.
     pub header: Header,
-    /// Record terminator. Currently not detected by sniffer; defaults to `Terminator::CRLF`.
-    pub terminator: Terminator,
-    /// Record quoting details. Detected by sniffer.
+    /// Record quoting details.
     pub quote: Quote,
-    /// Whether or not doubled quotes are interpreted as escapes. Currently not detected by sniffer;
-    /// defaults to `true`.
-    pub doublequote_escapes: bool,
-    /// Character used as escape, if any. Currently not detected by sniffer; defaults to
-    /// `Escape::Disabled` (to escape a quote, use double quotes).
-    pub escape: Escape,
-    /// Character used as comment, if any. Currently not detected by sniffer; defaults to
-    /// `Comment::Disabled`.
-    pub comment: Comment,
-    /// Whether or not the number of fields in a record is allowed to change. Detected by sniffer.
+    /// Whether or not the number of fields in a record is allowed to change.
     pub flexible: bool,
 }
 impl PartialEq for Dialect {
     fn eq(&self, other: &Dialect) -> bool {
         self.delimiter == other.delimiter
             && self.header == other.header
-            && match (self.terminator, other.terminator) {
-                (Terminator::CRLF, Terminator::CRLF) => true,
-                (Terminator::Any(left), Terminator::Any(right)) => left == right,
-                _ => false,
-            }
             && self.quote == other.quote
-            && self.doublequote_escapes == other.doublequote_escapes
-            && self.escape == other.escape
-            && self.comment == other.comment
             && self.flexible == other.flexible
     }
 }
@@ -88,11 +65,7 @@ impl fmt::Debug for Dialect {
         f.debug_struct("Dialect")
             .field("delimiter", &char::from(self.delimiter))
             .field("header", &self.header)
-            .field("terminator", &self.terminator)
             .field("quote", &self.quote)
-            .field("doublequote_escapes", &self.doublequote_escapes)
-            .field("escape", &self.escape)
-            .field("comment", &self.comment)
             .field("flexible", &self.flexible)
             .finish()
     }
@@ -113,23 +86,6 @@ impl fmt::Display for Dialect {
             match self.quote {
                 Quote::Some(chr) => format!("{}", char::from(chr)),
                 Quote::None => "none".into(),
-            }
-        )?;
-        writeln!(f, "\tDouble-quote escapes?: {}", self.doublequote_escapes)?;
-        writeln!(
-            f,
-            "\tEscape character: {}",
-            match self.escape {
-                Escape::Enabled(chr) => format!("{}", char::from(chr)),
-                Escape::Disabled => "none".into(),
-            }
-        )?;
-        writeln!(
-            f,
-            "\tComment character: {}",
-            match self.comment {
-                Comment::Enabled(chr) => format!("{}", char::from(chr)),
-                Comment::Disabled => "none".into(),
             }
         )?;
         writeln!(f, "\tFlexible: {}", self.flexible)
@@ -155,10 +111,6 @@ impl From<Dialect> for ReaderBuilder {
         let mut bldr = ReaderBuilder::new();
         bldr.delimiter(dialect.delimiter)
             .has_headers(dialect.header.has_header_row)
-            .terminator(dialect.terminator)
-            .escape(dialect.escape.into())
-            .double_quote(dialect.doublequote_escapes)
-            .comment(dialect.comment.into())
             .flexible(dialect.flexible);
 
         match dialect.quote {
