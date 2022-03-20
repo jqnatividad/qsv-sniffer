@@ -2,7 +2,9 @@
 authors = ["Jamie Blondin <jblondin@gmail.com>"]
 description = "A CSV file format sniffer for Rust"
 exclude = ["tests/data/*"]
-license-file = "LICENSE"
+keywords = ["csv"]
+categories = ["parser-implementations"]
+license = "MIT"
 name = "csv-sniffer"
 repository = "https://github.com/jblondin/csv-sniffer"
 version = "0.3.0"
