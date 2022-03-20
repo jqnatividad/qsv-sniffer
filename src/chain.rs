@@ -51,15 +51,17 @@ impl Chain {
         }
 
         let start_prob = [
-            /*SteadyStrict*/ 1.0 / 3.0,
-            /*SteadyFlexible*/ 1.0 / 3.0,
-            /*Unsteady*/ 1.0 / 3.0,
+            1.0 / 3.0, /*SteadyStrict*/
+            1.0 / 3.0, /*SteadyFlexible*/
+            1.0 / 3.0, /*Unsteady*/
         ];
         let mut trans_prob = [
-            /* ToSteadyStrict  ToSteadyFlexible    ToUnsteady */
             /*FromSteadyStrict*/
-            1.0, 0.0, 0.0, /*FromSteadyFlexible*/ 0.0, 1.0, 0.0, /*FromUnsteady*/ 0.2,
-            0.2, 0.6,
+            1.0, 0.0, 0.0, /* ToSteadyStrict, ToSteadyFlexible, ToUnsteady */
+            /*FromSteadyFlexible*/
+            0.0, 1.0, 0.0, /* ToSteadyStrict, ToSteadyFlexible, ToUnsteady */
+            /*FromUnsteady*/
+            0.2, 0.2, 0.6, /* ToSteadyStrict, ToSteadyFlexible, ToUnsteady */
         ];
         let update_trans_prob = |trans_prob: &mut [f64; N_STATES * N_STATES]| {
             const DELTA: f64 = 0.01;
@@ -76,17 +78,18 @@ impl Chain {
 
         let emit_uniprob = 1.0 / (max_value as f64 + 1.0);
         let emit_prob = [
-            /* MaxValue        Other                       Zero*/
             /*FromSteadyStrict*/
-            1.0,
-            0.0,
-            0.0,
-            /*FromSteadyFlexible*/ 0.7,
-            0.3,
-            0.0,
-            /*FromUnsteady*/ emit_uniprob,
-            1.0 - 2.0 * emit_uniprob,
-            emit_uniprob,
+            1.0, /* MaxValue */
+            0.0, /* Other */
+            0.0, /* Zero */
+            /*FromSteadyFlexible*/
+            0.7, /* MaxValue */
+            0.3, /* Other */
+            0.0, /* Zero */
+            /*FromUnsteady*/
+            emit_uniprob,             /* MaxValue */
+            1.0 - 2.0 * emit_uniprob, /* Other */
+            emit_uniprob,             /* Zero */
         ];
         // function to map frequency to observation
         let map_observation = |freq: usize| {
@@ -105,9 +108,7 @@ impl Chain {
                 prob: *prob_val,
                 prev: None,
             });
-            // print!("{:>30e},{}", iterations[0][iterations[0].len() - 1].prob, " ");
         }
-        // println!();
 
         for t in 0..self.observations.len() {
             // since we start with iterations already at length 1, the index of this newly-pushed
@@ -134,10 +135,7 @@ impl Chain {
                     prev: max_prev_st,
                 });
                 update_trans_prob(&mut trans_prob);
-                // print!("{:>30e},{}", iterations[t][iterations[t].len() - 1].prob,
-                //     iterations[t][iterations[t].len() - 1].prev.unwrap(),);
             }
-            // println!();
         }
 
         let (final_state, final_viter) = iterations[iterations.len() - 1].iter().enumerate().fold(
