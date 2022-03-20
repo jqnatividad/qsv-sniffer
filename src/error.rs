@@ -2,8 +2,8 @@
 Error types and conversions for the `csv-sniffer` crate.
 */
 use std::error::Error;
-use std::io;
 use std::fmt;
+use std::io;
 
 use csv;
 

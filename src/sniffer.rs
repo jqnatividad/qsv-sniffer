@@ -1,17 +1,17 @@
 use std::collections::HashMap;
-use std::path::Path;
-use std::io::{Read, Seek, SeekFrom};
 use std::fs::File;
+use std::io::{Read, Seek, SeekFrom};
+use std::path::Path;
 
-use regex::Regex;
-use csv::{self, Reader, Terminator, StringRecord};
+use csv::{self, Reader, StringRecord, Terminator};
 use csv_core as csvc;
+use regex::Regex;
 
-use metadata::*;
-use error::*;
 use chain::*;
-use field_type::{infer_record_types, infer_types, get_best_types, Type, TypeGuesses};
-use sample::{take_sample_from_start, SampleSize, SampleIter};
+use error::*;
+use field_type::{get_best_types, infer_record_types, infer_types, Type, TypeGuesses};
+use metadata::*;
+use sample::{take_sample_from_start, SampleIter, SampleSize};
 use snip::snip_preamble;
 
 /// A CSV sniffer.
@@ -66,7 +66,7 @@ impl Sniffer {
     }
 
     fn get_sample_size(&self) -> SampleSize {
-        self.sample_size.unwrap_or(SampleSize::Bytes(1<<14))
+        self.sample_size.unwrap_or(SampleSize::Bytes(1 << 14))
     }
 
     /// Sniff the CSV file located at the provided path, and return a `Reader` (from the
@@ -99,7 +99,6 @@ impl Sniffer {
     ///
     /// Fails on file opening or readering errors, or on an error examining the file.
     pub fn sniff_reader<R: Read + Seek>(&mut self, mut reader: R) -> Result<Metadata> {
-
         // guess quotes & delim
         self.infer_quotes_delim(&mut reader)?;
 
@@ -114,12 +113,13 @@ impl Sniffer {
         self.infer_types(&mut reader)?;
 
         // as this point of the process, we should have all these filled in.
-        assert!(self.delimiter.is_some()
-            && self.num_preamble_rows.is_some()
-            && self.quote.is_some()
-            && self.flexible.is_some()
-            && self.delimiter_freq.is_some()
-            && self.has_header_row.is_some()
+        assert!(
+            self.delimiter.is_some()
+                && self.num_preamble_rows.is_some()
+                && self.quote.is_some()
+                && self.flexible.is_some()
+                && self.delimiter_freq.is_some()
+                && self.has_header_row.is_some()
         );
         Ok(Metadata {
             dialect: Dialect {
@@ -136,15 +136,14 @@ impl Sniffer {
                 flexible: self.flexible.unwrap(),
             },
             num_fields: self.delimiter_freq.unwrap() + 1,
-            types: self.types.clone()
+            types: self.types.clone(),
         })
     }
 
     // Infers quotes and delimiter from quoted (or possibly quoted) files. If quotes detected,
     // updates self.quote and self.delimiter. If quotes not detected, updates self.quote to
     // Quote::None. Only valid quote characters: " (double-quote), ' (single-quote), ` (back-tick).
-    fn infer_quotes_delim<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()>
-    {
+    fn infer_quotes_delim<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()> {
         if let (&Some(_), &Some(_)) = (&self.quote, &self.delimiter) {
             // nothing let to infer!
             return Ok(());
@@ -155,8 +154,8 @@ impl Sniffer {
                 // this function only checks quoted (or possibly quoted) files, nothing left to
                 // do if we know there are no quotes
                 return Ok(());
-            },
-            None => vec![b'\'', b'"', b'`']
+            }
+            None => vec![b'\'', b'"', b'`'],
         };
         // TODO: this can probably be replaced with a try_fold whenever that leaves nightly
         let (quote_chr, (quote_cnt, delim_guess)) = quote_guesses.iter().fold(
@@ -164,17 +163,21 @@ impl Sniffer {
             |acc: Result<(u8, (usize, u8))>, &chr| {
                 if let Ok(acc) = acc {
                     let mut sample_reader = take_sample_from_start(reader, self.get_sample_size())?;
-                    if let Some((cnt, delim_chr)) = quote_count(&mut sample_reader,
-                        char::from(chr), &self.delimiter)?
+                    if let Some((cnt, delim_chr)) =
+                        quote_count(&mut sample_reader, char::from(chr), &self.delimiter)?
                     {
-                        Ok(if cnt > (acc.1).0 { (chr, (cnt, delim_chr)) } else { acc })
+                        Ok(if cnt > (acc.1).0 {
+                            (chr, (cnt, delim_chr))
+                        } else {
+                            acc
+                        })
                     } else {
                         Ok(acc)
                     }
                 } else {
                     acc
                 }
-            }
+            },
         )?;
         if quote_cnt == 0 {
             self.quote = Some(Quote::None);
@@ -201,22 +204,29 @@ impl Sniffer {
             // properly escapes quoted fields
             let mut csv_reader = csvc::ReaderBuilder::new()
                 .delimiter(delim)
-                .quote(character).build();
+                .quote(character)
+                .build();
 
             let mut output = vec![];
             let mut ends = vec![];
             for line in sample_iter {
                 let line = line?;
-                if line.len() > output.len() { output.resize(line.len(), 0); }
-                if line.len() > ends.len() { ends.resize(line.len(), 0); }
-                let (result, _, _, n_ends) = csv_reader.read_record(line.as_bytes(), &mut output,
-                    &mut ends);
+                if line.len() > output.len() {
+                    output.resize(line.len(), 0);
+                }
+                if line.len() > ends.len() {
+                    ends.resize(line.len(), 0);
+                }
+                let (result, _, _, n_ends) =
+                    csv_reader.read_record(line.as_bytes(), &mut output, &mut ends);
                 // check to make sure record was read correctly
                 match result {
                     csvc::ReadRecordResult::OutputFull | csvc::ReadRecordResult::OutputEndsFull => {
                         return Err(SnifferError::SniffingFailed(format!(
-                            "failure to read quoted CSV record: {:?}", result)));
-                    },
+                            "failure to read quoted CSV record: {:?}",
+                            result
+                        )));
+                    }
                     _ => {} // non-error results, do nothing
                 }
                 // n_ends is the number of barries between fields, so it's the same as the number
@@ -234,8 +244,7 @@ impl Sniffer {
     }
 
     // Updates delimiter, delimiter frequency, number of preamble rows, and flexible boolean.
-    fn infer_delim_preamble<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()>
-    {
+    fn infer_delim_preamble<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()> {
         let sample_iter = take_sample_from_start(reader, self.get_sample_size())?;
 
         const NUM_ASCII_CHARS: usize = 128;
@@ -266,26 +275,31 @@ impl Sniffer {
         // correspond with position in a vector of Chains), but we'll just ignore it when
         // constructing our return value later. 'best_state' and 'path' are necessary, though, to
         // compute the preamble rows.
-        let (best_delim, delim_freq, best_state, path, _) = chains.iter_mut().enumerate()
-            .fold((b',', 0, STATE_UNSTEADY, vec![], 0.0), |acc, (i, ref mut chain)| {
+        let (best_delim, delim_freq, best_state, path, _) = chains.iter_mut().enumerate().fold(
+            (b',', 0, STATE_UNSTEADY, vec![], 0.0),
+            |acc, (i, ref mut chain)| {
                 let (_, _, best_state, _, best_state_prob) = acc;
-                let ViterbiResults { max_delim_freq, path } = chain.viterbi();
+                let ViterbiResults {
+                    max_delim_freq,
+                    path,
+                } = chain.viterbi();
                 let (final_state, final_viter) = path[path.len() - 1];
                 if final_state < best_state
                     || (final_state == best_state && final_viter.prob > best_state_prob)
                 {
-                   (i as u8, max_delim_freq, final_state, path, final_viter.prob)
+                    (i as u8, max_delim_freq, final_state, path, final_viter.prob)
                 } else {
                     acc
                 }
-            }
+            },
         );
         self.flexible = Some(match best_state {
             STATE_STEADYSTRICT => false,
             STATE_STEADYFLEX => true,
             _ => {
                 return Err(SnifferError::SniffingFailed(
-                    "unable to find valid delimiter".to_string()));
+                    "unable to find valid delimiter".to_string(),
+                ));
             }
         });
 
@@ -327,9 +341,11 @@ impl Sniffer {
                 n_records += 1;
                 n_bytes += count_bytes(&record);
                 infer_record_types(&record)
-            },
+            }
             None => {
-                return Err(SnifferError::SniffingFailed("CSV empty (after preamble)".into()));
+                return Err(SnifferError::SniffingFailed(
+                    "CSV empty (after preamble)".into(),
+                ));
             }
         };
         let mut row_types = vec![TypeGuesses::all(); field_count];
@@ -343,8 +359,16 @@ impl Sniffer {
             n_bytes += count_bytes(&record);
             // break if we pass sample size limits
             match sample_size {
-                SampleSize::Records(recs) => { if n_records > recs { break; } }
-                SampleSize::Bytes(bytes) => { if n_bytes > bytes { break; } }
+                SampleSize::Records(recs) => {
+                    if n_records > recs {
+                        break;
+                    }
+                }
+                SampleSize::Bytes(bytes) => {
+                    if n_bytes > bytes {
+                        break;
+                    }
+                }
                 SampleSize::All => {}
             }
         }
@@ -356,7 +380,11 @@ impl Sniffer {
             return Ok(());
         }
 
-        if header_row_types.iter().zip(&row_types).any(|(header, data)| !data.allows(header)) {
+        if header_row_types
+            .iter()
+            .zip(&row_types)
+            .any(|(header, data)| !data.allows(header))
+        {
             self.has_header_row = Some(true);
         } else {
             self.has_header_row = Some(false);
@@ -366,40 +394,48 @@ impl Sniffer {
         Ok(())
     }
 
-    fn create_csv_reader<'a, R: Read + Seek>(&self, mut reader: &'a mut R)
-        -> Result<Reader<&'a mut R>>
-    {
+    fn create_csv_reader<'a, R: Read + Seek>(
+        &self,
+        mut reader: &'a mut R,
+    ) -> Result<Reader<&'a mut R>> {
         reader.seek(SeekFrom::Start(0))?;
         if let Some(num_preamble_rows) = self.num_preamble_rows {
             snip_preamble(&mut reader, num_preamble_rows)?;
         }
 
         let mut builder = csv::ReaderBuilder::new();
-        if let Some(delim) = self.delimiter { builder.delimiter(delim); }
-        if let Some(has_header_row) = self.has_header_row { builder.has_headers(has_header_row); }
+        if let Some(delim) = self.delimiter {
+            builder.delimiter(delim);
+        }
+        if let Some(has_header_row) = self.has_header_row {
+            builder.has_headers(has_header_row);
+        }
         match self.quote {
             Some(Quote::Some(chr)) => {
                 builder.quoting(true);
                 builder.quote(chr);
-            },
+            }
             Some(Quote::None) => {
                 builder.quoting(false);
             }
             _ => {}
         }
-        if let Some(flexible) = self.flexible { builder.flexible(flexible); }
+        if let Some(flexible) = self.flexible {
+            builder.flexible(flexible);
+        }
 
         Ok(builder.from_reader(reader))
     }
-
 }
 
-fn quote_count<R: Read>(sample_iter: &mut SampleIter<R>, character: char, delim: &Option<u8>)
-    -> Result<Option<(usize, u8)>>
-{
+fn quote_count<R: Read>(
+    sample_iter: &mut SampleIter<R>,
+    character: char,
+    delim: &Option<u8>,
+) -> Result<Option<(usize, u8)>> {
     let pattern = match *delim {
         Some(delim) => format!(r#"{}\s*?{}\s*{}"#, character, delim, character),
-        None => format!(r#"{}\s*?(?P<delim>[^\w\n'"`])\s*{}"#, character, character)
+        None => format!(r#"{}\s*?(?P<delim>[^\w\n'"`])\s*{}"#, character, character),
     };
     let re = Regex::new(&pattern).unwrap();
 
@@ -412,7 +448,8 @@ fn quote_count<R: Read>(sample_iter: &mut SampleIter<R>, character: char, delim:
         for cap in re.captures_iter(&line) {
             count += 1;
             // if we already know delimiter, we don't need to count
-            if delim.is_some() {} else {
+            if delim.is_some() {
+            } else {
                 *delim_count_map.entry(cap["delim"].to_string()).or_insert(0) += 1;
             }
         }
@@ -427,16 +464,17 @@ fn quote_count<R: Read>(sample_iter: &mut SampleIter<R>, character: char, delim:
     }
 
     // find the highest-count delimiter in the map
-    let (delim_count, delim) = delim_count_map.iter().fold((0, b'\0'),
-        |acc, (delim, &delim_count)| {
-            assert!(delim.len() == 1);
-            if delim_count > acc.0 {
-                (delim_count, (delim.as_ref() as &[u8])[0])
-            } else {
-                acc
-            }
-        }
-    );
+    let (delim_count, delim) =
+        delim_count_map
+            .iter()
+            .fold((0, b'\0'), |acc, (delim, &delim_count)| {
+                assert!(delim.len() == 1);
+                if delim_count > acc.0 {
+                    (delim_count, (delim.as_ref() as &[u8])[0])
+                } else {
+                    acc
+                }
+            });
 
     // delim_count should be nonzero; delim should always match at least something
     assert_ne!(delim_count, 0, "invalid regex match: no delimiter found");
@@ -444,5 +482,5 @@ fn quote_count<R: Read>(sample_iter: &mut SampleIter<R>, character: char, delim:
 }
 
 fn count_bytes(record: &StringRecord) -> usize {
-    record.iter().fold(0, |acc, field| { acc + field.len() })
+    record.iter().fold(0, |acc, field| acc + field.len())
 }

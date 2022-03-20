@@ -1,4 +1,4 @@
-use std::io::{Read, BufReader, BufRead, Seek, SeekFrom};
+use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
 
 use error::*;
 
@@ -10,16 +10,16 @@ pub enum SampleSize {
     /// Use a number of bytes as the size of the sample to sniff.
     Bytes(usize),
     /// Sniff the entire sample.
-    All
+    All,
 }
 
-pub fn take_sample_from_start<R>(reader: &mut R, sample_size: SampleSize)
-    -> Result<SampleIter<R>> where R: Read + Seek
+pub fn take_sample_from_start<R>(reader: &mut R, sample_size: SampleSize) -> Result<SampleIter<R>>
+where
+    R: Read + Seek,
 {
     reader.seek(SeekFrom::Start(0))?;
     Ok(SampleIter::new(reader, sample_size))
 }
-
 
 pub struct SampleIter<'a, R: 'a + Read> {
     reader: BufReader<&'a mut R>,
@@ -46,12 +46,16 @@ impl<'a, R: Read> Iterator for SampleIter<'a, R> {
     type Item = Result<String>;
 
     fn next(&mut self) -> Option<Result<String>> {
-        if self.is_done { return None; }
+        if self.is_done {
+            return None;
+        }
 
         let mut output = String::new();
         let n_bytes_read = match self.reader.read_line(&mut output) {
             Ok(n_bytes_read) => n_bytes_read,
-            Err(e) => { return Some(Err(e.into())); }
+            Err(e) => {
+                return Some(Err(e.into()));
+            }
         };
         if n_bytes_read == 0 {
             self.is_done = true;
@@ -74,13 +78,13 @@ impl<'a, R: Read> Iterator for SampleIter<'a, R> {
                     self.is_done = true;
                     return None;
                 }
-            },
+            }
             SampleSize::Bytes(max_bytes) => {
                 if self.n_bytes > max_bytes {
                     self.is_done = true;
                     return None;
                 }
-            },
+            }
             SampleSize::All => {}
         }
         Some(Ok(output))
