@@ -2,9 +2,9 @@
 CSV metadata types.
 */
 use std::fmt;
-use std::path::Path;
-use std::io::{Read, Seek};
 use std::fs::File;
+use std::io::{Read, Seek};
+use std::path::Path;
 
 use csv::{Reader, ReaderBuilder, Terminator};
 
@@ -74,7 +74,7 @@ impl PartialEq for Dialect {
             && match (self.terminator, other.terminator) {
                 (Terminator::CRLF, Terminator::CRLF) => true,
                 (Terminator::Any(left), Terminator::Any(right)) => left == right,
-                _ => false
+                _ => false,
             }
             && self.quote == other.quote
             && self.doublequote_escapes == other.doublequote_escapes
@@ -102,21 +102,36 @@ impl fmt::Display for Dialect {
         writeln!(f, "Dialect:")?;
         writeln!(f, "\tDelimiter: {}", char::from(self.delimiter))?;
         writeln!(f, "\tHas header row?: {}", self.header.has_header_row)?;
-        writeln!(f, "\tNumber of preamble rows: {}", self.header.num_preamble_rows)?;
-        writeln!(f, "\tQuote character: {}", match self.quote {
-            Quote::Some(chr) => format!("{}", char::from(chr)),
-            Quote::None => "none".into()
-        })?;
+        writeln!(
+            f,
+            "\tNumber of preamble rows: {}",
+            self.header.num_preamble_rows
+        )?;
+        writeln!(
+            f,
+            "\tQuote character: {}",
+            match self.quote {
+                Quote::Some(chr) => format!("{}", char::from(chr)),
+                Quote::None => "none".into(),
+            }
+        )?;
         writeln!(f, "\tDouble-quote escapes?: {}", self.doublequote_escapes)?;
-        writeln!(f, "\tEscape character: {}", match self.escape {
-            Escape::Enabled(chr) => format!("{}", char::from(chr)),
-            Escape::Disabled => "none".into(),
-
-        })?;
-        writeln!(f, "\tComment character: {}", match self.comment {
-            Comment::Enabled(chr) => format!("{}", char::from(chr)),
-            Comment::Disabled => "none".into()
-        })?;
+        writeln!(
+            f,
+            "\tEscape character: {}",
+            match self.escape {
+                Escape::Enabled(chr) => format!("{}", char::from(chr)),
+                Escape::Disabled => "none".into(),
+            }
+        )?;
+        writeln!(
+            f,
+            "\tComment character: {}",
+            match self.comment {
+                Comment::Enabled(chr) => format!("{}", char::from(chr)),
+                Comment::Disabled => "none".into(),
+            }
+        )?;
         writeln!(f, "\tFlexible: {}", self.flexible)
     }
 }
@@ -150,7 +165,7 @@ impl From<Dialect> for ReaderBuilder {
             Quote::Some(character) => {
                 bldr.quoting(true);
                 bldr.quote(character);
-            },
+            }
             Quote::None => {
                 bldr.quoting(false);
             }
@@ -167,7 +182,7 @@ pub struct Header {
     pub has_header_row: bool,
     /// Number of rows that occur before either the header row (if `has_header_row` is `true), or
     /// the first data row.
-    pub num_preamble_rows: usize
+    pub num_preamble_rows: usize,
 }
 
 /// Metadata about the quoting style of the CSV file.
@@ -176,17 +191,16 @@ pub enum Quote {
     /// Quotes are not used in the CSV file.
     None,
     /// Quotes are enabled, with the provided character used as the quote character.
-    Some(u8)
+    Some(u8),
 }
 impl fmt::Debug for Quote {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Quote::Some(ref character) => {
-                f.debug_struct("Some")
-                    .field("character", &char::from(*character))
-                    .finish()
-            },
-            Quote::None => write!(f, "None")
+            Quote::Some(ref character) => f
+                .debug_struct("Some")
+                .field("character", &char::from(*character))
+                .finish(),
+            Quote::None => write!(f, "None"),
         }
     }
 }
@@ -197,13 +211,13 @@ pub enum Escape {
     /// Escapes are enabled, with the provided character as the escape character.
     Enabled(u8),
     /// Escapes are disabled.
-    Disabled
+    Disabled,
 }
 impl From<Escape> for Option<u8> {
     fn from(escape: Escape) -> Option<u8> {
         match escape {
             Escape::Enabled(chr) => Some(chr),
-            Escape::Disabled => None
+            Escape::Disabled => None,
         }
     }
 }
@@ -211,7 +225,7 @@ impl fmt::Debug for Escape {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Escape::Enabled(chr) => write!(f, "Enabled({})", char::from(chr)),
-            Escape::Disabled => write!(f, "Disabled")
+            Escape::Disabled => write!(f, "Disabled"),
         }
     }
 }
@@ -222,13 +236,13 @@ pub enum Comment {
     /// Comments are enabled, with the provided character as the comment character.
     Enabled(u8),
     /// Comments are disabled.
-    Disabled
+    Disabled,
 }
 impl From<Comment> for Option<u8> {
     fn from(comment: Comment) -> Option<u8> {
         match comment {
             Comment::Enabled(chr) => Some(chr),
-            Comment::Disabled => None
+            Comment::Disabled => None,
         }
     }
 }
@@ -236,7 +250,7 @@ impl fmt::Debug for Comment {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Comment::Enabled(chr) => write!(f, "Enabled({})", char::from(chr)),
-            Comment::Disabled => write!(f, "Disabled")
+            Comment::Disabled => write!(f, "Disabled"),
         }
     }
 }

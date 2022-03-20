@@ -1,16 +1,22 @@
-extern crate csv_sniffer;
 extern crate csv;
+extern crate csv_sniffer;
 
 use std::path::Path;
 
+use csv::Terminator;
 use csv_sniffer::metadata::*;
-use csv::{Terminator};
 
 fn main() {
-    let data_filepath = Path::new(file!()).parent().unwrap().join("../tests/data/gdp.csv");
+    let data_filepath = Path::new(file!())
+        .parent()
+        .unwrap()
+        .join("../tests/data/gdp.csv");
     let dialect = Dialect {
         delimiter: b',',
-        header: Header { has_header_row: true, num_preamble_rows: 4 },
+        header: Header {
+            has_header_row: true,
+            num_preamble_rows: 4,
+        },
         quote: Quote::Some(b'"'),
         doublequote_escapes: true,
         comment: Comment::Disabled,

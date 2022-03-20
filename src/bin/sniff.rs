@@ -13,7 +13,7 @@ fn main() {
     match csv_sniffer::Sniffer::new().sniff_path(&args[1]) {
         Ok(metadata) => {
             println!("{}", metadata);
-        },
+        }
         Err(err) => {
             eprintln!("ERROR: {}", err);
         }
