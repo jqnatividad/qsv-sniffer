@@ -1,8 +1,6 @@
 use std::io::{Read, Seek, SeekFrom};
 
-use memchr;
-
-use error::*;
+use crate::error::Result;
 
 pub(crate) fn preamble_skipcount<R: Read>(reader: &mut R, n_preamble_rows: usize) -> Result<usize> {
     if n_preamble_rows == 0 {

@@ -5,8 +5,6 @@ use std::error::Error;
 use std::fmt;
 use std::io;
 
-use csv;
-
 /// An error that occurs while examining a CSV data file.
 #[derive(Debug)]
 pub enum SnifferError {

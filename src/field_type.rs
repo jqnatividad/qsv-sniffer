@@ -1,5 +1,6 @@
 use std::fmt;
 
+use bitflags::bitflags;
 use csv::StringRecord;
 
 bitflags! {

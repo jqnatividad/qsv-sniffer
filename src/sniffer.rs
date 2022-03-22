@@ -7,12 +7,14 @@ use csv::{self, Reader, StringRecord};
 use csv_core as csvc;
 use regex::Regex;
 
-use chain::*;
-use error::*;
-use field_type::{get_best_types, infer_record_types, infer_types, Type, TypeGuesses};
-use metadata::*;
-use sample::{take_sample_from_start, SampleIter, SampleSize};
-use snip::snip_preamble;
+use crate::{
+    chain::{Chain, ViterbiResults, STATE_UNSTEADY},
+    error::{Result, SnifferError},
+    field_type::{get_best_types, infer_record_types, infer_types, Type, TypeGuesses},
+    metadata::{Dialect, Header, Metadata, Quote},
+    sample::{take_sample_from_start, SampleIter, SampleSize},
+    snip::snip_preamble,
+};
 
 /// A CSV sniffer.
 ///

@@ -1,6 +1,6 @@
 use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
 
-use error::*;
+use crate::error::Result;
 
 /// Argument used when calling `sample_size` on `Sniffer`.
 #[derive(Debug, Clone, Copy)]

@@ -2,6 +2,7 @@
 authors = ["Jamie Blondin <jblondin@gmail.com>"]
 categories = ["parser-implementations"]
 description = "A CSV file format sniffer for Rust"
+edition = "2021"
 exclude = ["tests/data/*"]
 keywords = ["csv"]
 license = "MIT"
