@@ -10,6 +10,14 @@ name = "csv-sniffer"
 repository = "https://github.com/jblondin/csv-sniffer"
 version = "0.3.1"
 
+[features]
+cli = []
+default = ["cli"]
+
+[[bin]]
+name = "sniff"
+required-features = ["cli"]
+
 [dependencies]
 bitflags = "1"
 csv = "1"
