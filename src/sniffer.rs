@@ -234,7 +234,7 @@ impl Sniffer {
         } else {
             for line in sample_iter {
                 let line = line?;
-                let freq = line.as_bytes().iter().filter(|&&c| c == delim).count();
+                let freq = bytecount::count(line.as_bytes(), delim);
                 chain.add_observation(freq);
             }
         }
