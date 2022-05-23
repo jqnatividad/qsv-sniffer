@@ -5,16 +5,19 @@ use std::path::Path;
 
 use csv::{self, Reader, StringRecord};
 use csv_core as csvc;
+use once_cell::sync::OnceCell;
 use regex::Regex;
 
 use crate::{
-    chain::{Chain, ViterbiResults, STATE_UNSTEADY, STATE_STEADYSTRICT, STATE_STEADYFLEX},
+    chain::{Chain, ViterbiResults, STATE_STEADYFLEX, STATE_STEADYSTRICT, STATE_UNSTEADY},
     error::{Result, SnifferError},
     field_type::{get_best_types, infer_record_types, infer_types, Type, TypeGuesses},
     metadata::{Dialect, Header, Metadata, Quote},
     sample::{take_sample_from_start, SampleIter, SampleSize},
     snip::snip_preamble,
 };
+
+pub static IS_UTF8: OnceCell<bool> = OnceCell::new();
 
 /// A CSV sniffer.
 ///
@@ -27,6 +30,7 @@ pub struct Sniffer {
     has_header_row: Option<bool>,
     quote: Option<Quote>,
     flexible: Option<bool>,
+    is_utf8: Option<bool>,
 
     // Metadata guesses
     delimiter_freq: Option<usize>,
@@ -113,6 +117,10 @@ impl Sniffer {
         }
 
         self.infer_types(&mut reader)?;
+        self.is_utf8 = match IS_UTF8.get() {
+            Some(_val) => Some(false),
+            None => Some(true),
+        };
 
         // as this point of the process, we should have all these filled in.
         assert!(
@@ -120,6 +128,7 @@ impl Sniffer {
                 && self.num_preamble_rows.is_some()
                 && self.quote.is_some()
                 && self.flexible.is_some()
+                && self.is_utf8.is_some()
                 && self.delimiter_freq.is_some()
                 && self.has_header_row.is_some()
         );
@@ -132,6 +141,7 @@ impl Sniffer {
                 },
                 quote: self.quote.clone().unwrap(),
                 flexible: self.flexible.unwrap(),
+                is_utf8: self.is_utf8.unwrap(),
             },
             num_fields: self.delimiter_freq.unwrap() + 1,
             types: self.types.clone(),
