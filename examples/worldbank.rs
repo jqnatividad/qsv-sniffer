@@ -18,6 +18,7 @@ fn main() {
         },
         quote: Quote::Some(b'"'),
         flexible: false,
+        is_utf8: true,
     };
     let mut reader = dialect.open_path(data_filepath).unwrap();
     for result in reader.records() {

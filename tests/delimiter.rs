@@ -26,7 +26,8 @@ fn test_semicolon() {
                     num_preamble_rows: 0,
                 },
                 quote: Quote::None,
-                flexible: false
+                flexible: false,
+                is_utf8: true
             },
             num_fields: 5,
             types: vec![
@@ -60,7 +61,8 @@ fn test_comma() {
                     num_preamble_rows: 0,
                 },
                 quote: Quote::None,
-                flexible: false
+                flexible: false,
+                is_utf8: true,
             },
             num_fields: 5,
             types: vec![
@@ -94,7 +96,8 @@ fn test_flexible() {
                     num_preamble_rows: 0,
                 },
                 quote: Quote::None,
-                flexible: true
+                flexible: true,
+                is_utf8: true,
             },
             num_fields: 7,
             types: vec![
