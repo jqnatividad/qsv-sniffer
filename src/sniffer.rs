@@ -34,6 +34,7 @@ pub struct Sniffer {
 
     // Metadata guesses
     delimiter_freq: Option<usize>,
+    fields: Vec<String>,
     types: Vec<Type>,
 
     // sample size to sniff
@@ -144,6 +145,7 @@ impl Sniffer {
                 is_utf8: self.is_utf8.unwrap(),
             },
             num_fields: self.delimiter_freq.unwrap() + 1,
+            fields: self.fields.clone(),
             types: self.types.clone(),
         })
     }
@@ -396,6 +398,10 @@ impl Sniffer {
             .any(|(header, data)| !data.allows(header))
         {
             self.has_header_row = Some(true);
+            // get field names in header
+            for field in csv_reader.byte_headers()?.iter() {
+                self.fields.push(String::from_utf8_lossy(field).to_string());
+            }
         } else {
             self.has_header_row = Some(false);
         }
