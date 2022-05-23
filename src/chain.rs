@@ -72,8 +72,12 @@ impl Chain {
             trans_prob[STATE_UNSTEADY * N_STATES + STATE_STEADYFLEX] =
                 (trans_prob[STATE_UNSTEADY * N_STATES + STATE_STEADYFLEX] - DELTA).max(0.0);
             // increment transition from Unsteady to itself by 2*delta
-            trans_prob[STATE_UNSTEADY * N_STATES + STATE_UNSTEADY] =
-                2.0f64.mul_add(DELTA, trans_prob[STATE_UNSTEADY * N_STATES + STATE_UNSTEADY]).min(1.0);
+            trans_prob[STATE_UNSTEADY * N_STATES + STATE_UNSTEADY] = 2.0f64
+                .mul_add(
+                    DELTA,
+                    trans_prob[STATE_UNSTEADY * N_STATES + STATE_UNSTEADY],
+                )
+                .min(1.0);
         };
 
         let emit_uniprob = 1.0 / (max_value as f64 + 1.0);
