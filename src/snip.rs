@@ -30,9 +30,8 @@ pub(crate) fn preamble_skipcount<R: Read>(reader: &mut R, n_preamble_rows: usize
         if found {
             skipcount += crlf_pos;
             break;
-        } else {
-            skipcount += cap.min(n_read);
         }
+        skipcount += cap.min(n_read);
     }
     Ok(skipcount)
 }
