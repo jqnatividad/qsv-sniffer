@@ -30,6 +30,19 @@ fn test_utf8() {
                 is_utf8: false
             },
             num_fields: 11,
+            fields: vec![
+                "DIA.DESEMB".to_string(),
+                "COD.SUBITEM.NCM".to_string(),
+                "VMLE.DOLAR.BAL.EXP".to_string(),
+                "PESO.LIQ.MERC.BAL.EXP".to_string(),
+                "COD.IMPDR.EXPDR".to_string(),
+                "NOME.IMPDR.EXPDR".to_string(),
+                "PAIS.ORIGEM.DESTINO".to_string(),
+                "UA.LOCAL.DESBQ.EMBQ".to_string(),
+                "NOME.IMPORTADOR.ESTRANGEIRO".to_string(),
+                "NUM.DDE".to_string(),
+                "NUM.RE".to_string()
+            ],
             types: vec![
                 Type::Text,
                 Type::Unsigned,

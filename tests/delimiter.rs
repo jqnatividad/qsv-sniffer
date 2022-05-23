@@ -30,6 +30,13 @@ fn test_semicolon() {
                 is_utf8: true
             },
             num_fields: 5,
+            fields: vec![
+                "Name".to_string(),
+                "Party".to_string(),
+                "Vote Count".to_string(),
+                "Voting Method".to_string(),
+                "Voting Preinct".to_string()
+            ],
             types: vec![
                 Type::Text,
                 Type::Text,
@@ -65,6 +72,13 @@ fn test_comma() {
                 is_utf8: true,
             },
             num_fields: 5,
+            fields: vec![
+                "Month".to_string(),
+                "Door Count".to_string(),
+                "Web Site Visits".to_string(),
+                "Catalog Visits".to_string(),
+                "Overdrive Visits".to_string()
+            ],
             types: vec![
                 Type::Text,
                 Type::Unsigned,
@@ -100,6 +114,15 @@ fn test_flexible() {
                 is_utf8: true,
             },
             num_fields: 7,
+            fields: vec![
+                "municipality".to_string(),
+                "agency_id".to_string(),
+                "route_id".to_string(),
+                "route_short_name".to_string(),
+                "route_long_name".to_string(),
+                "min_headway_minutes".to_string(),
+                "route_url".to_string()
+            ],
             types: vec![
                 Type::Text,
                 Type::Unsigned,
