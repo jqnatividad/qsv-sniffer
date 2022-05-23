@@ -49,6 +49,8 @@ pub struct Dialect {
     pub quote: Quote,
     /// Whether or not the number of fields in a record is allowed to change.
     pub flexible: bool,
+    /// Whether the file is utf-8 encoded.
+    pub is_utf8: bool,
 }
 impl PartialEq for Dialect {
     fn eq(&self, other: &Dialect) -> bool {
@@ -56,6 +58,7 @@ impl PartialEq for Dialect {
             && self.header == other.header
             && self.quote == other.quote
             && self.flexible == other.flexible
+            && self.is_utf8 == other.is_utf8
     }
 }
 impl fmt::Debug for Dialect {
@@ -65,6 +68,7 @@ impl fmt::Debug for Dialect {
             .field("header", &self.header)
             .field("quote", &self.quote)
             .field("flexible", &self.flexible)
+            .field("is_utf8", &self.is_utf8)
             .finish()
     }
 }
@@ -86,7 +90,8 @@ impl fmt::Display for Dialect {
                 Quote::None => "none".into(),
             }
         )?;
-        writeln!(f, "\tFlexible: {}", self.flexible)
+        writeln!(f, "\tFlexible: {}", self.flexible)?;
+        writeln!(f, "\tIs utf-8 encoded?: {}", self.is_utf8)
     }
 }
 impl Dialect {
