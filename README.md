@@ -39,13 +39,13 @@ qsv-sniffer = "0.4"
 and this to your crate root:
 
 ```rust
-crate qsv_sniffer;
+use qsv_sniffer;
 ```
 
 ## Feature flags
 * `cli` - to build the `sniff` binary
 * `runtime-dispatch-simd` - enables detection of SIMD capabilities at runtime, which allows using the
-SSE2 and AVX2 code paths (only valid on Intel and AMD architectures).
+SSE2 and AVX2 code paths (only works on Intel and AMD architectures. Ignored on other architectures).
 * `generic-simd` - enables an architecture-agnostic SIMD capabilities, but only works with Rust nightly.
 
 The SIMD features are mutually exclusive and greatly increase sampling performance.
@@ -56,7 +56,7 @@ This example shows how to write a simple command-line tool for discovering the m
 file:
 
 ```no_run
-crate qsv_sniffer;
+use qsv_sniffer;
 
 use std::env;
 

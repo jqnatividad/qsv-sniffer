@@ -1,4 +1,4 @@
-extern crate qsv_sniffer;
+use qsv_sniffer;
 
 use std::env;
 
