@@ -20,6 +20,13 @@ generic-simd = ["bytecount/generic-simd"]
 name = "sniff"
 required-features = ["cli"]
 
+[profile.release]
+codegen-units = 1
+debug         = false
+lto           = true
+opt-level     = 3
+strip         = true
+
 [dependencies]
 bitflags = "1"
 bytecount = "0.6"
