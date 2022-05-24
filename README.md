@@ -1,10 +1,20 @@
 # CSV Sniffer
 
-[![Build Status](https://travis-ci.org/jblondin/csv-sniffer.svg?branch=master)](https://travis-ci.org/jblondin/csv-sniffer)
-[![Documentation](https://docs.rs/csv-sniffer/badge.svg)](https://docs.rs/csv-sniffer)
+[![Documentation](https://docs.rs/qsv-sniffer/badge.svg)](https://docs.rs/qsv-sniffer)
 
-This `csv-sniffer` crate provides methods to infer CSV file details (delimiter choice, quote
-character, number of fields, field data types, etc.). See the documentation for more details.
+`qsv-sniffer` provides methods to infer CSV file details (delimiter choice, quote character,
+number of fields, field names, field data types, etc.). See the documentation for more details.
+
+Its a detached fork of [csv-sniffer](https://github.com/jblondin/csv-sniffer) with these additional capabilities, detecting:
+
+* utf-8 encoding
+* field names
+* number of rows
+* additional data types (WIP)
+
+> ℹ️ **NOTE:** This fork is optimized to support [qsv](https://github.com/jqnatividad/qsv), and its development
+will be primarily dictated by qsv's requirements. Please continue to use `csv-sniffer` if you want
+a general-purpose CSV sniffer.
 
 # Setup
 
@@ -12,13 +22,13 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-csv-sniffer = "0.1"
+qsv-sniffer = "0.1"
 ```
 
 and this to your crate root:
 
 ```rust
-extern crate csv_sniffer;
+crate qsv_sniffer;
 ```
 
 # Example
@@ -27,7 +37,7 @@ This example shows how to write a simple command-line tool for discovering the m
 file:
 
 ```no_run
-extern crate csv_sniffer;
+crate qsv_sniffer;
 
 use std::env;
 
@@ -39,7 +49,7 @@ fn main() {
     }
 
     // sniff the path provided by the first argument
-    match csv_sniffer::Sniffer::new().sniff_path(&args[1]) {
+    match qsv_sniffer::Sniffer::new().sniff_path(&args[1]) {
         Ok(metadata) => {
             println!("{}", metadata);
         },
