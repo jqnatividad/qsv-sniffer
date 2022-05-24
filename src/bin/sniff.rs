@@ -1,4 +1,4 @@
-extern crate csv_sniffer;
+extern crate qsv_sniffer;
 
 use std::env;
 
@@ -10,7 +10,7 @@ fn main() {
     }
 
     // sniff the path provided by the first argument
-    match csv_sniffer::Sniffer::new().sniff_path(&args[1]) {
+    match qsv_sniffer::Sniffer::new().sniff_path(&args[1]) {
         Ok(metadata) => {
             println!("{}", metadata);
         }
