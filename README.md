@@ -1,4 +1,4 @@
-# qsv CSV Sniffer
+# qsv CSV sniffer
 
 [![Documentation](https://docs.rs/qsv-sniffer/badge.svg)](https://docs.rs/qsv-sniffer)
 
@@ -18,11 +18,22 @@ a general-purpose CSV sniffer.
 
 # Setup
 
+## As a Command-line application
+
+```
+cargo install qsv-sniffer
+```
+
+This will install a binary named `sniff`.
+
+## As a Library
+
+
 Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-qsv-sniffer = "0.1"
+qsv-sniffer = "0.4"
 ```
 
 and this to your crate root:
@@ -30,6 +41,14 @@ and this to your crate root:
 ```rust
 crate qsv_sniffer;
 ```
+
+## Feature flags
+* `cli` - to build the `sniff` binary
+* `runtime-dispatch-simd` - enables detection of SIMD capabilities at runtime, which allows using the
+SSE2 and AVX2 code paths (only valid on Intel and AMD architectures).
+* `generic-simd` - enables an architecture-agnostic SIMD capabilities, but only works with Rust nightly.
+
+The SIMD features are mutually exclusive and greatly increase sampling performance.
 
 # Example
 
