@@ -1,6 +1,7 @@
 use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
 
 use crate::error::Result;
+use crate::sniffer::IS_UTF8;
 
 /// Argument used when calling `sample_size` on `Sniffer`.
 #[derive(Debug, Clone, Copy)]
@@ -50,8 +51,8 @@ impl<'a, R: Read> Iterator for SampleIter<'a, R> {
             return None;
         }
 
-        let mut output = String::new();
-        let n_bytes_read = match self.reader.read_line(&mut output) {
+        let mut buf = vec![];
+        let n_bytes_read = match self.reader.read_until(b'\n', &mut buf) {
             Ok(n_bytes_read) => n_bytes_read,
             Err(e) => {
                 return Some(Err(e.into()));
@@ -61,15 +62,22 @@ impl<'a, R: Read> Iterator for SampleIter<'a, R> {
             self.is_done = true;
             return None;
         }
+        let mut output = if let Ok(str_utf8) = String::from_utf8(buf.clone()) {
+            str_utf8
+        } else {
+            IS_UTF8.set(false).unwrap_or_default();
+            String::from_utf8_lossy(&buf).to_string()
+        };
+
         let last_byte = (output.as_ref() as &[u8])[output.len() - 1];
         if last_byte != b'\n' && last_byte != b'\r' {
             // non CR/LF-ended line
             // line was cut off before ending, so we ignore it!
             self.is_done = true;
             return None;
-        } else {
-            output = output.trim_matches(|c| c == '\n' || c == '\r').into();
         }
+
+        output = output.trim_matches(|c| c == '\n' || c == '\r').into();
         self.n_bytes += n_bytes_read;
         self.n_records += 1;
         match self.sample_size {

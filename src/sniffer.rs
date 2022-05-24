@@ -5,16 +5,19 @@ use std::path::Path;
 
 use csv::{self, Reader, StringRecord};
 use csv_core as csvc;
+use once_cell::sync::OnceCell;
 use regex::Regex;
 
 use crate::{
-    chain::{Chain, ViterbiResults, STATE_UNSTEADY},
+    chain::{Chain, ViterbiResults, STATE_STEADYFLEX, STATE_STEADYSTRICT, STATE_UNSTEADY},
     error::{Result, SnifferError},
     field_type::{get_best_types, infer_record_types, infer_types, Type, TypeGuesses},
     metadata::{Dialect, Header, Metadata, Quote},
     sample::{take_sample_from_start, SampleIter, SampleSize},
     snip::snip_preamble,
 };
+
+pub static IS_UTF8: OnceCell<bool> = OnceCell::new();
 
 /// A CSV sniffer.
 ///
@@ -27,9 +30,11 @@ pub struct Sniffer {
     has_header_row: Option<bool>,
     quote: Option<Quote>,
     flexible: Option<bool>,
+    is_utf8: Option<bool>,
 
     // Metadata guesses
     delimiter_freq: Option<usize>,
+    fields: Vec<String>,
     types: Vec<Type>,
 
     // sample size to sniff
@@ -113,6 +118,10 @@ impl Sniffer {
         }
 
         self.infer_types(&mut reader)?;
+        self.is_utf8 = match IS_UTF8.get() {
+            Some(_val) => Some(false),
+            None => Some(true),
+        };
 
         // as this point of the process, we should have all these filled in.
         assert!(
@@ -120,6 +129,7 @@ impl Sniffer {
                 && self.num_preamble_rows.is_some()
                 && self.quote.is_some()
                 && self.flexible.is_some()
+                && self.is_utf8.is_some()
                 && self.delimiter_freq.is_some()
                 && self.has_header_row.is_some()
         );
@@ -132,8 +142,10 @@ impl Sniffer {
                 },
                 quote: self.quote.clone().unwrap(),
                 flexible: self.flexible.unwrap(),
+                is_utf8: self.is_utf8.unwrap(),
             },
             num_fields: self.delimiter_freq.unwrap() + 1,
+            fields: self.fields.clone(),
             types: self.types.clone(),
         })
     }
@@ -234,7 +246,7 @@ impl Sniffer {
         } else {
             for line in sample_iter {
                 let line = line?;
-                let freq = line.as_bytes().iter().filter(|&&c| c == delim).count();
+                let freq = bytecount::count(line.as_bytes(), delim);
                 chain.add_observation(freq);
             }
         }
@@ -326,7 +338,7 @@ impl Sniffer {
         let field_count = self.delimiter_freq.unwrap() + 1;
 
         let mut csv_reader = self.create_csv_reader(reader)?;
-        let mut records_iter = csv_reader.records();
+        let mut records_iter = csv_reader.byte_records();
         let mut n_bytes = 0;
         let mut n_records = 0;
         let sample_size = self.get_sample_size();
@@ -335,10 +347,11 @@ impl Sniffer {
         // of the remaining rows to see if this is part of the data or a separate header row.
         let header_row_types = match records_iter.next() {
             Some(record) => {
-                let record = record?;
+                let byte_record = record?;
+                let str_record = StringRecord::from_byte_record_lossy(byte_record);
                 n_records += 1;
-                n_bytes += count_bytes(&record);
-                infer_record_types(&record)
+                n_bytes += count_bytes(&str_record);
+                infer_record_types(&str_record)
             }
             None => {
                 return Err(SnifferError::SniffingFailed(
@@ -351,10 +364,11 @@ impl Sniffer {
         for record in records_iter {
             let record = record?;
             for (i, field) in record.iter().enumerate() {
-                row_types[i] &= infer_types(field);
+                let str_field = String::from_utf8_lossy(field).to_string();
+                row_types[i] &= infer_types(&str_field);
             }
             n_records += 1;
-            n_bytes += count_bytes(&record);
+            n_bytes += record.as_slice().len();
             // break if we pass sample size limits
             match sample_size {
                 SampleSize::Records(recs) => {
@@ -384,6 +398,10 @@ impl Sniffer {
             .any(|(header, data)| !data.allows(header))
         {
             self.has_header_row = Some(true);
+            // get field names in header
+            for field in csv_reader.byte_headers()?.iter() {
+                self.fields.push(String::from_utf8_lossy(field).to_string());
+            }
         } else {
             self.has_header_row = Some(false);
         }

@@ -3,10 +3,11 @@ CSV metadata types.
 */
 use std::fmt;
 use std::fs::File;
-use std::io::{Read, Seek};
+use std::io::{Read, Seek, Write};
 use std::path::Path;
 
 use csv::{Reader, ReaderBuilder};
+use tabwriter::TabWriter;
 
 use crate::{error::Result, field_type::Type, snip::snip_preamble};
 
@@ -20,6 +21,8 @@ pub struct Metadata {
     pub dialect: Dialect,
     /// (Maximum) number of fields per record.
     pub num_fields: usize,
+    /// field/column names
+    pub fields: Vec<String>,
     /// Inferred field types.
     pub types: Vec<Type>,
 }
@@ -29,10 +32,18 @@ impl fmt::Display for Metadata {
         writeln!(f, "========")?;
         writeln!(f, "{}", self.dialect)?;
         writeln!(f, "Number of fields: {}", self.num_fields)?;
-        writeln!(f, "Types:")?;
+        writeln!(f, "Fields:")?;
+
+        let mut tabwtr = TabWriter::new(vec![]);
+
         for (i, ty) in self.types.iter().enumerate() {
-            writeln!(f, "\t{}: {}", i, ty)?;
+            writeln!(&mut tabwtr, "\t{}:\t{}\t{}", i, ty, self.fields[i]).unwrap();
         }
+        tabwtr.flush().unwrap();
+
+        let tabbed_field_list = String::from_utf8(tabwtr.into_inner().unwrap()).unwrap();
+        writeln!(f, "{}", tabbed_field_list)?;
+
         Ok(())
     }
 }
@@ -49,6 +60,8 @@ pub struct Dialect {
     pub quote: Quote,
     /// Whether or not the number of fields in a record is allowed to change.
     pub flexible: bool,
+    /// Whether the file is utf-8 encoded.
+    pub is_utf8: bool,
 }
 impl PartialEq for Dialect {
     fn eq(&self, other: &Dialect) -> bool {
@@ -56,6 +69,7 @@ impl PartialEq for Dialect {
             && self.header == other.header
             && self.quote == other.quote
             && self.flexible == other.flexible
+            && self.is_utf8 == other.is_utf8
     }
 }
 impl fmt::Debug for Dialect {
@@ -65,6 +79,7 @@ impl fmt::Debug for Dialect {
             .field("header", &self.header)
             .field("quote", &self.quote)
             .field("flexible", &self.flexible)
+            .field("is_utf8", &self.is_utf8)
             .finish()
     }
 }
@@ -86,7 +101,8 @@ impl fmt::Display for Dialect {
                 Quote::None => "none".into(),
             }
         )?;
-        writeln!(f, "\tFlexible: {}", self.flexible)
+        writeln!(f, "\tFlexible: {}", self.flexible)?;
+        writeln!(f, "\tIs utf-8 encoded?: {}", self.is_utf8)
     }
 }
 impl Dialect {
