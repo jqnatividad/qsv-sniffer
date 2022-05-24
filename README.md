@@ -1,8 +1,8 @@
-# CSV Sniffer
+# qsv CSV Sniffer
 
 [![Documentation](https://docs.rs/qsv-sniffer/badge.svg)](https://docs.rs/qsv-sniffer)
 
-`qsv-sniffer` provides methods to infer CSV file details (delimiter choice, quote character,
+`qsv-sniffer` provides methods to infer CSV file metadata (delimiter choice, quote character,
 number of fields, field names, field data types, etc.). See the documentation for more details.
 
 Its a detached fork of [csv-sniffer](https://github.com/jblondin/csv-sniffer) with these additional capabilities, detecting:
