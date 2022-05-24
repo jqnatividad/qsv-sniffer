@@ -1,9 +1,9 @@
 extern crate csv;
-extern crate csv_sniffer;
+extern crate qsv_sniffer;
 
 use std::path::Path;
 
-use csv_sniffer::{SampleSize, Sniffer};
+use qsv_sniffer::{SampleSize, Sniffer};
 
 fn main() {
     let data_filepath = Path::new(file!())
