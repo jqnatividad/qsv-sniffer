@@ -48,7 +48,7 @@ use qsv_sniffer;
 SSE2 and AVX2 code paths (only works on Intel and AMD architectures. Ignored on other architectures).
 * `generic-simd` - enables architecture-agnostic SIMD capabilities, but only works with Rust nightly.
 
-The SIMD features are mutually exclusive and greatly increase sampling performance.
+The SIMD features are mutually exclusive and increase sampling performance.
 
 # Example
 
