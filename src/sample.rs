@@ -65,7 +65,10 @@ impl<'a, R: Read> Iterator for SampleIter<'a, R> {
         let mut output = if let Ok(str_utf8) = String::from_utf8(buf.clone()) {
             str_utf8
         } else {
-            IS_UTF8.set(false).unwrap_or_default();
+            // Its not all utf-8, set IS_UTF8 global to false
+            IS_UTF8.with(|flag| {
+                *flag.borrow_mut() = false;
+            });
             String::from_utf8_lossy(&buf).to_string()
         };
 

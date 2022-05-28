@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
@@ -5,7 +6,6 @@ use std::path::Path;
 
 use csv::{self, Reader, StringRecord};
 use csv_core as csvc;
-use once_cell::sync::OnceCell;
 use regex::Regex;
 
 use crate::{
@@ -17,7 +17,7 @@ use crate::{
     snip::snip_preamble,
 };
 
-pub static IS_UTF8: OnceCell<bool> = OnceCell::new();
+thread_local! (pub static IS_UTF8: RefCell<bool> = RefCell::new(true));
 
 /// A CSV sniffer.
 ///
@@ -106,6 +106,10 @@ impl Sniffer {
     ///
     /// Fails on file opening or readering errors, or on an error examining the file.
     pub fn sniff_reader<R: Read + Seek>(&mut self, mut reader: R) -> Result<Metadata> {
+        // init IS_UTF8 global var to true
+        IS_UTF8.with(|flag| {
+            *flag.borrow_mut() = true;
+        });
         // guess quotes & delim
         self.infer_quotes_delim(&mut reader)?;
 
@@ -118,10 +122,7 @@ impl Sniffer {
         }
 
         self.infer_types(&mut reader)?;
-        self.is_utf8 = match IS_UTF8.get() {
-            Some(_val) => Some(false),
-            None => Some(true),
-        };
+        self.is_utf8 = Some(IS_UTF8.with(|flag| *flag.borrow()));
 
         // as this point of the process, we should have all these filled in.
         assert!(
