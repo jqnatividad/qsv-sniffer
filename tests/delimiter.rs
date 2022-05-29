@@ -137,7 +137,7 @@ fn test_flexible() {
 }
 
 #[test]
-fn test_utf8_2() {
+fn test_utf8_again() {
     let data_filepath = Path::new(file!())
         .parent()
         .unwrap()
@@ -184,6 +184,96 @@ fn test_utf8_2() {
                 Type::Text,
                 Type::Text,
                 Type::Text,
+                Type::Text
+            ]
+        }
+    );
+}
+
+#[test]
+fn test_date_sniffing() {
+    let data_filepath = Path::new(file!())
+        .parent()
+        .unwrap()
+        .join("data/boston311.csv");
+    let metadata = Sniffer::new()
+        .sample_size(SampleSize::All)
+        .sniff_path(data_filepath)
+        .unwrap();
+    assert_eq!(
+        metadata,
+        Metadata {
+            dialect: Dialect {
+                delimiter: b',',
+                header: Header {
+                    has_header_row: true,
+                    num_preamble_rows: 0
+                },
+                quote: Quote::None,
+                flexible: false,
+                is_utf8: true
+            },
+            num_fields: 29,
+            fields: vec![
+                "case_enquiry_id".to_string(),
+                "open_dt".to_string(),
+                "target_dt".to_string(),
+                "closed_dt".to_string(),
+                "ontime".to_string(),
+                "case_status".to_string(),
+                "closure_reason".to_string(),
+                "case_title".to_string(),
+                "subject".to_string(),
+                "reason".to_string(),
+                "type".to_string(),
+                "queue".to_string(),
+                "department".to_string(),
+                "submittedphoto".to_string(),
+                "closedphoto".to_string(),
+                "location".to_string(),
+                "fire_district".to_string(),
+                "pwd_district".to_string(),
+                "city_council_district".to_string(),
+                "police_district".to_string(),
+                "neighborhood".to_string(),
+                "neighborhood_services_district".to_string(),
+                "ward".to_string(),
+                "precinct".to_string(),
+                "location_street_name".to_string(),
+                "location_zipcode".to_string(),
+                "latitude".to_string(),
+                "longitude".to_string(),
+                "source".to_string(),
+            ],
+            types: vec![
+                Type::Unsigned,
+                Type::DateTime,
+                Type::DateTime,
+                Type::DateTime,
+                Type::Text,
+                Type::Text,
+                Type::Text,
+                Type::Text,
+                Type::Text,
+                Type::Text,
+                Type::Text,
+                Type::Text,
+                Type::Text,
+                Type::Text,
+                Type::Boolean,
+                Type::Text,
+                Type::Unsigned,
+                Type::Text,
+                Type::Unsigned,
+                Type::Text,
+                Type::Text,
+                Type::Unsigned,
+                Type::Text,
+                Type::Unsigned,
+                Type::Text,
+                Type::Unsigned,
+                Type::Float,
+                Type::Float,
                 Type::Text
             ]
         }

@@ -4,7 +4,7 @@ extern crate qsv_sniffer;
 use std::path::Path;
 
 use qsv_sniffer::metadata::*;
-use qsv_sniffer::{SampleSize, Sniffer, Type};
+use qsv_sniffer::{DatePreference, SampleSize, Sniffer, Type};
 
 #[test]
 fn test_utf8() {
@@ -102,6 +102,41 @@ fn test_flexible_again() {
                 Type::Unsigned,
                 Type::Text
             ]
+        }
+    );
+}
+
+#[test]
+fn test_date_sniffing_dmy() {
+    let data_filepath = Path::new(file!())
+        .parent()
+        .unwrap()
+        .join("data/dmy-test.csv");
+    let metadata = Sniffer::new()
+        .sample_size(SampleSize::All)
+        .date_preference(DatePreference::DmyFormat)
+        .sniff_path(data_filepath)
+        .unwrap();
+    assert_eq!(
+        metadata,
+        Metadata {
+            dialect: Dialect {
+                delimiter: b',',
+                header: Header {
+                    has_header_row: true,
+                    num_preamble_rows: 0
+                },
+                quote: Quote::None,
+                flexible: false,
+                is_utf8: true
+            },
+            num_fields: 3,
+            fields: vec![
+                "starttime".to_string(),
+                "letter".to_string(),
+                "number".to_string(),
+            ],
+            types: vec![Type::DateTime, Type::Text, Type::Unsigned,]
         }
     );
 }

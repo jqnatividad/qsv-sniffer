@@ -11,13 +11,16 @@ use regex::Regex;
 use crate::{
     chain::{Chain, ViterbiResults, STATE_STEADYFLEX, STATE_STEADYSTRICT, STATE_UNSTEADY},
     error::{Result, SnifferError},
-    field_type::{get_best_types, infer_record_types, infer_types, Type, TypeGuesses},
+    field_type::{
+        get_best_types, infer_record_types, infer_types, DatePreference, Type, TypeGuesses,
+    },
     metadata::{Dialect, Header, Metadata, Quote},
     sample::{take_sample_from_start, SampleIter, SampleSize},
     snip::snip_preamble,
 };
 
 thread_local! (pub static IS_UTF8: RefCell<bool> = RefCell::new(true));
+thread_local! (pub static DATE_PREFERENCE: RefCell<DatePreference> = RefCell::new(DatePreference::MdyFormat));
 
 /// A CSV sniffer.
 ///
@@ -39,6 +42,9 @@ pub struct Sniffer {
 
     // sample size to sniff
     sample_size: Option<SampleSize>,
+
+    // date format preference
+    date_preference: Option<DatePreference>,
 }
 impl Sniffer {
     /// Create a new CSV sniffer.
@@ -74,6 +80,17 @@ impl Sniffer {
 
     fn get_sample_size(&self) -> SampleSize {
         self.sample_size.unwrap_or(SampleSize::Bytes(1 << 14))
+    }
+
+    /// The date format preference when sniffing.
+    ///
+    /// The date format preference defaults to `DatePreference::MDY`.
+    pub fn date_preference(&mut self, date_preference: DatePreference) -> &mut Sniffer {
+        DATE_PREFERENCE.with(|preference| {
+            *preference.borrow_mut() = date_preference;
+        });
+        self.date_preference = Some(date_preference);
+        self
     }
 
     /// Sniff the CSV file located at the provided path, and return a `Reader` (from the
