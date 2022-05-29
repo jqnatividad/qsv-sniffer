@@ -1,4 +1,4 @@
-use qsv_sniffer;
+use qsv_sniffer::DatePreference;
 
 use std::env;
 
@@ -10,7 +10,10 @@ fn main() {
     }
 
     // sniff the path provided by the first argument
-    match qsv_sniffer::Sniffer::new().sniff_path(&args[1]) {
+    match qsv_sniffer::Sniffer::new()
+        .date_preference(DatePreference::MdyFormat)
+        .sniff_path(&args[1])
+    {
         Ok(metadata) => {
             println!("{}", metadata);
         }
