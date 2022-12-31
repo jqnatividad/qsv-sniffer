@@ -33,7 +33,7 @@ impl TypeGuesses {
     /// Compute the 'best-fitting' `Type` among the guesses of this struct. 'Best-fitting' in this
     /// case means the narrowest definition: `Type::Boolean` being the narrowest, and `Type::Text`
     /// being the widest (since everything can be a text field).
-    pub(crate) fn best(self) -> Type {
+    pub(crate) const fn best(self) -> Type {
         // if all values are some sort of boolean (0 or 1, or 'true' and 'false'), guess boolean
         if self.contains(TypeGuesses::BOOLEAN) {
             Type::Boolean
