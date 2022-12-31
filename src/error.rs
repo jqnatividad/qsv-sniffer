@@ -22,9 +22,9 @@ pub type Result<T> = ::std::result::Result<T, SnifferError>;
 impl fmt::Display for SnifferError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            SnifferError::Io(ref err) => write!(f, "IO error: {}", err),
-            SnifferError::Csv(ref err) => write!(f, "CSV read error: {}", err),
-            SnifferError::SniffingFailed(ref s) => write!(f, "Sniffing failed: {}", s),
+            SnifferError::Io(ref err) => write!(f, "IO error: {err}"),
+            SnifferError::Csv(ref err) => write!(f, "CSV read error: {err}"),
+            SnifferError::SniffingFailed(ref s) => write!(f, "Sniffing failed: {s}"),
         }
     }
 }

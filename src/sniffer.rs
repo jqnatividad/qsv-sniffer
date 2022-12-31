@@ -251,8 +251,7 @@ impl Sniffer {
                 match result {
                     csvc::ReadRecordResult::OutputFull | csvc::ReadRecordResult::OutputEndsFull => {
                         return Err(SnifferError::SniffingFailed(format!(
-                            "failure to read quoted CSV record: {:?}",
-                            result
+                            "failure to read quoted CSV record: {result:?}"
                         )));
                     }
                     _ => {} // non-error results, do nothing
@@ -468,8 +467,8 @@ fn quote_count<R: Read>(
     delim: &Option<u8>,
 ) -> Result<Option<(usize, u8)>> {
     let pattern = match *delim {
-        Some(delim) => format!(r#"{}\s*?{}\s*{}"#, character, delim, character),
-        None => format!(r#"{}\s*?(?P<delim>[^\w\n'"`])\s*{}"#, character, character),
+        Some(delim) => format!(r#"{character}\s*?{delim}\s*{character}"#),
+        None => format!(r#"{character}\s*?(?P<delim>[^\w\n'"`])\s*{character}"#),
     };
     let re = Regex::new(&pattern).unwrap();
 

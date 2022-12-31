@@ -15,10 +15,10 @@ fn main() {
         .sniff_path(&args[1])
     {
         Ok(metadata) => {
-            println!("{}", metadata);
+            println!("{metadata}");
         }
         Err(err) => {
-            eprintln!("ERROR: {}", err);
+            eprintln!("ERROR: {err}");
         }
     }
 }

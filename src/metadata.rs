@@ -42,7 +42,7 @@ impl fmt::Display for Metadata {
         tabwtr.flush().unwrap();
 
         let tabbed_field_list = String::from_utf8(tabwtr.into_inner().unwrap()).unwrap();
-        writeln!(f, "{}", tabbed_field_list)?;
+        writeln!(f, "{tabbed_field_list}")?;
 
         Ok(())
     }
