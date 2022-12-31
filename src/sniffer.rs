@@ -286,7 +286,7 @@ impl Sniffer {
                 }
             }
             for (chr, &freq) in freqs.iter().enumerate() {
-                chains[chr as usize].add_observation(freq);
+                chains[chr].add_observation(freq);
             }
         }
 
