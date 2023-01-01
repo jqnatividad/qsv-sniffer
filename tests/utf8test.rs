@@ -136,7 +136,7 @@ fn test_date_sniffing_dmy() {
                 "letter".to_string(),
                 "number".to_string(),
             ],
-            types: vec![Type::DateTime, Type::Text, Type::Unsigned,]
+            types: vec![Type::Date, Type::Text, Type::Unsigned,]
         }
     );
 }
