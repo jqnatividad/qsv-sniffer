@@ -17,14 +17,11 @@ pub(crate) fn preamble_skipcount<R: Read>(reader: &mut R, n_preamble_rows: usize
         let mut crlf_pos = 0;
         let mut found = true;
         for _ in 0..n_preamble_rows {
-            match memchr::memchr(b'\n', &buffer[crlf_pos..]) {
-                Some(pos) => {
-                    crlf_pos += pos + 1;
-                }
-                None => {
-                    found = false;
-                    break;
-                }
+            if let Some(pos) = memchr::memchr(b'\n', &buffer[crlf_pos..]) {
+                crlf_pos += pos + 1;
+            } else {
+                found = false;
+                break;
             }
         }
         if found {
