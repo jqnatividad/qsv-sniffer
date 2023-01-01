@@ -80,22 +80,6 @@ pub(crate) fn infer_types(s: &str) -> TypeGuesses {
     let mut guesses = TypeGuesses::default();
     guesses |= TypeGuesses::TEXT;
 
-    let dt_preference = matches!(
-        DATE_PREFERENCE.with(|preference| *preference.borrow()),
-        DatePreference::DmyFormat
-    );
-    if let Ok(parsed_date) = parse_with_preference(s, dt_preference) {
-        let rfc3339_date_str = parsed_date.to_string();
-
-        // with rfc3339 format, time component
-        // starts at position 17. If its shorter than 17,
-        // its a plain date, otherwise, its a datetime.
-        if rfc3339_date_str.len() >= 17 {
-            return TypeGuesses::DATETIME;
-        }
-        return TypeGuesses::DATE;
-    }
-
     if s.parse::<u64>().is_ok() {
         guesses |= TypeGuesses::UNSIGNED;
     }
@@ -107,6 +91,18 @@ pub(crate) fn infer_types(s: &str) -> TypeGuesses {
     }
     if s.parse::<f64>().is_ok() {
         guesses |= TypeGuesses::FLOAT;
+    }
+    if let Ok(parsed_date) = parse_with_preference(s, matches!(
+        DATE_PREFERENCE.with(|preference| *preference.borrow()),
+        DatePreference::DmyFormat
+    )) {
+        // get date in rfc3339 format, if it ends with "T00:00:00+00:00"
+        // its a Date type, otherwise, its DateTime.
+        if parsed_date.to_rfc3339().ends_with("T00:00:00+00:00") {
+            guesses |= TypeGuesses::DATE;
+        } else {
+            guesses |= TypeGuesses::DATETIME;
+        }
     }
     guesses
 }
