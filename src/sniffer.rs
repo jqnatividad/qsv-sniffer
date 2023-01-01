@@ -412,7 +412,7 @@ impl Sniffer {
         if header_row_types
             .iter()
             .zip(&row_types)
-            .any(|(header, data)| !data.allows(header))
+            .any(|(header, data)| !data.allows(*header))
         {
             self.has_header_row = Some(true);
             // get field names in header

@@ -67,8 +67,8 @@ impl TypeGuesses {
     /// if `self` is TypesGuesses::SIGNED | TypesGuesses::FLOAT | TypeGuesses::TEXT, and `other` is
     /// TypesGuesses::TEXT, then `allows` returns `false` (since self is more restrictive than
     /// other).
-    pub(crate) fn allows(self, other: &TypeGuesses) -> bool {
-        !(self - *other).is_empty()
+    pub(crate) fn allows(self, other: TypeGuesses) -> bool {
+        !(self - other).is_empty()
     }
 }
 
