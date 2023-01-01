@@ -92,10 +92,13 @@ pub(crate) fn infer_types(s: &str) -> TypeGuesses {
     if s.parse::<f64>().is_ok() {
         guesses |= TypeGuesses::FLOAT;
     }
-    if let Ok(parsed_date) = parse_with_preference(s, matches!(
-        DATE_PREFERENCE.with(|preference| *preference.borrow()),
-        DatePreference::DmyFormat
-    )) {
+    if let Ok(parsed_date) = parse_with_preference(
+        s,
+        matches!(
+            DATE_PREFERENCE.with(|preference| *preference.borrow()),
+            DatePreference::DmyFormat
+        ),
+    ) {
         // get date in rfc3339 format, if it ends with "T00:00:00+00:00"
         // its a Date type, otherwise, its DateTime.
         if parsed_date.to_rfc3339().ends_with("T00:00:00+00:00") {
