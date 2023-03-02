@@ -91,11 +91,11 @@ impl Chain {
             0.3, /* Other */
             0.0, /* Zero */
             /*FromUnsteady*/
-            emit_uniprob,             /* MaxValue */
+            emit_uniprob, /* MaxValue */
             // 1.0 - 2.0 * emit_uniprob, /* Other */
             // below is the fused multiply add version
             2.0f64.mul_add(-emit_uniprob, 1.0),
-            emit_uniprob,             /* Zero */
+            emit_uniprob, /* Zero */
         ];
         // function to map frequency to observation
         let map_observation = |freq: usize| {

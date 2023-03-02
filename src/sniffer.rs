@@ -334,10 +334,13 @@ impl Sniffer {
         // before getting to the final state).
         let mut num_preamble_rows = 0;
         // since path has an extra state as the beginning, skip one
-        for &(state, _) in path.iter().skip(1) {
+        for &(state, _) in path.iter().skip(2) {
             if state == best_state {
                 break;
             }
+            num_preamble_rows += 1;
+        }
+        if num_preamble_rows > 0 {
             num_preamble_rows += 1;
         }
         if self.delimiter.is_none() {

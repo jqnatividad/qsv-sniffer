@@ -8,7 +8,7 @@ keywords = ["csv"]
 license = "MIT"
 name = "qsv-sniffer"
 repository = "https://github.com/jqnatividad/qsv-sniffer"
-version = "0.6.0"
+version = "0.6.1"
 
 [features]
 cli = []
@@ -34,5 +34,5 @@ csv = "1"
 csv-core = "0.1"
 memchr = "2"
 qsv-dateparser = "0.6"
-regex = "1.5"
+regex = "1"
 tabwriter = "1.2"

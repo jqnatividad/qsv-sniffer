@@ -37,7 +37,14 @@ impl fmt::Display for Metadata {
         let mut tabwtr = TabWriter::new(vec![]);
 
         for (i, ty) in self.types.iter().enumerate() {
-            writeln!(&mut tabwtr, "\t{}:\t{}\t{}", i, ty, self.fields[i]).unwrap();
+            writeln!(
+                &mut tabwtr,
+                "\t{}:\t{}\t{}",
+                i,
+                ty,
+                self.fields.get(i).unwrap_or(&String::new())
+            )
+            .unwrap_or_default();
         }
         tabwtr.flush().unwrap();
 
