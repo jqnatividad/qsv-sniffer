@@ -10,6 +10,7 @@ Its a detached fork of [csv-sniffer](https://github.com/jblondin/csv-sniffer) wi
 * utf-8 encoding
 * field names
 * number of rows
+* average record length
 * additional data types - Date and DateTime
 
 > ℹ️ **NOTE:** This fork is optimized to support [qsv](https://github.com/jqnatividad/qsv), and its development
@@ -33,7 +34,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-qsv-sniffer = "0.5"
+qsv-sniffer = "0.7"
 ```
 
 and this to your crate root:
