@@ -39,6 +39,7 @@ pub struct Sniffer {
     delimiter_freq: Option<usize>,
     fields: Vec<String>,
     types: Vec<Type>,
+    avg_record_len: Option<usize>,
 
     // sample size to sniff
     sample_size: Option<SampleSize>,
@@ -162,6 +163,7 @@ impl Sniffer {
                 flexible: self.flexible.unwrap(),
                 is_utf8: self.is_utf8.unwrap(),
             },
+            avg_record_len: self.avg_record_len.unwrap(),
             num_fields: self.delimiter_freq.unwrap() + 1,
             fields: self.fields.clone(),
             types: self.types.clone(),
@@ -427,6 +429,7 @@ impl Sniffer {
         }
 
         self.types = get_best_types(row_types);
+        self.avg_record_len = Some(n_bytes / n_records);
         Ok(())
     }
 
