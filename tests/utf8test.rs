@@ -29,6 +29,7 @@ fn test_utf8() {
                 flexible: false,
                 is_utf8: false
             },
+            avg_record_len: 137,
             num_fields: 11,
             fields: vec![
                 "DIA.DESEMB".to_string(),
@@ -83,6 +84,7 @@ fn test_flexible_again() {
                 flexible: true,
                 is_utf8: true,
             },
+            avg_record_len: 112,
             num_fields: 7,
             fields: vec![
                 "municipality".to_string(),
@@ -130,6 +132,7 @@ fn test_date_sniffing_dmy() {
                 flexible: false,
                 is_utf8: true
             },
+            avg_record_len: 11,
             num_fields: 3,
             fields: vec![
                 "starttime".to_string(),
