@@ -29,6 +29,7 @@ fn test_semicolon() {
                 flexible: false,
                 is_utf8: true
             },
+            avg_record_len: 35,
             num_fields: 5,
             fields: vec![
                 "Name".to_string(),
@@ -71,6 +72,7 @@ fn test_comma() {
                 flexible: false,
                 is_utf8: true,
             },
+            avg_record_len: 30,
             num_fields: 5,
             fields: vec![
                 "Month".to_string(),
@@ -113,6 +115,7 @@ fn test_flexible() {
                 flexible: true,
                 is_utf8: true,
             },
+            avg_record_len: 112,
             num_fields: 7,
             fields: vec![
                 "municipality".to_string(),
@@ -159,6 +162,7 @@ fn test_utf8_again() {
                 flexible: false,
                 is_utf8: false
             },
+            avg_record_len: 137,
             num_fields: 11,
             fields: vec![
                 "DIA.DESEMB".to_string(),
@@ -213,6 +217,7 @@ fn test_date_sniffing() {
                 flexible: false,
                 is_utf8: true
             },
+            avg_record_len: 433,
             num_fields: 29,
             fields: vec![
                 "case_enquiry_id".to_string(),

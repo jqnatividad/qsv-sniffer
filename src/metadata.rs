@@ -19,6 +19,8 @@ use crate::{error::Result, field_type::Type, snip::snip_preamble};
 pub struct Metadata {
     /// [`Dialect`](struct.Dialect.html) subtype.
     pub dialect: Dialect,
+    /// Average record length (in bytes).
+    pub avg_record_len: usize,
     /// (Maximum) number of fields per record.
     pub num_fields: usize,
     /// field/column names
@@ -31,6 +33,7 @@ impl fmt::Display for Metadata {
         writeln!(f, "Metadata")?;
         writeln!(f, "========")?;
         writeln!(f, "{}", self.dialect)?;
+        writeln!(f, "Average record length (bytes): {}", self.avg_record_len)?;
         writeln!(f, "Number of fields: {}", self.num_fields)?;
         writeln!(f, "Fields:")?;
 
