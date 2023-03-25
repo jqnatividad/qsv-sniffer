@@ -410,7 +410,7 @@ impl Sniffer {
             // there's only one row in the whole data file (the top row already parsed),
             // so we're going to assume it's a data row, not a header row.
             self.has_header_row = Some(false);
-            self.types = get_best_types(header_row_types);
+            self.types = get_best_types(&header_row_types);
             return Ok(());
         }
 
@@ -428,7 +428,7 @@ impl Sniffer {
             self.has_header_row = Some(false);
         }
 
-        self.types = get_best_types(row_types);
+        self.types = get_best_types(&row_types);
         self.avg_record_len = Some(n_bytes / n_records);
         Ok(())
     }

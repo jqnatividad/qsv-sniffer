@@ -132,7 +132,7 @@ pub enum Type {
     /// DateTime
     DateTime,
 }
-pub(crate) fn get_best_types(guesses: Vec<TypeGuesses>) -> Vec<Type> {
+pub(crate) fn get_best_types(guesses: &[TypeGuesses]) -> Vec<Type> {
     guesses.iter().map(|guess| guess.best()).collect()
 }
 impl fmt::Display for Type {
