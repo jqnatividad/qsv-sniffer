@@ -194,7 +194,7 @@ impl Sniffer {
                 if let Ok(acc) = acc {
                     let mut sample_reader = take_sample_from_start(reader, self.get_sample_size())?;
                     if let Some((cnt, delim_chr)) =
-                        quote_count(&mut sample_reader, char::from(chr), &self.delimiter)?
+                        quote_count(&mut sample_reader, char::from(chr), self.delimiter)?
                     {
                         Ok(if cnt > (acc.1).0 {
                             (chr, (cnt, delim_chr))
@@ -470,9 +470,9 @@ impl Sniffer {
 fn quote_count<R: Read>(
     sample_iter: &mut SampleIter<R>,
     character: char,
-    delim: &Option<u8>,
+    delim: Option<u8>,
 ) -> Result<Option<(usize, u8)>> {
-    let pattern = match *delim {
+    let pattern = match delim {
         Some(delim) => format!(r#"{character}\s*?{delim}\s*{character}"#),
         None => format!(r#"{character}\s*?(?P<delim>[^\w\n'"`])\s*{character}"#),
     };
@@ -498,7 +498,7 @@ fn quote_count<R: Read>(
     }
 
     // if we already know delimiter, no need to go through map
-    if let Some(delim) = *delim {
+    if let Some(delim) = delim {
         return Ok(Some((count, delim)));
     }
 
