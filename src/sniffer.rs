@@ -58,7 +58,7 @@ impl Sniffer {
         self
     }
     /// Specify the header type (whether the CSV file has a header row, and where the data starts).
-    pub fn header(&mut self, header: Header) -> &mut Sniffer {
+    pub fn header(&mut self, header: &Header) -> &mut Sniffer {
         self.num_preamble_rows = Some(header.num_preamble_rows);
         self.has_header_row = Some(header.has_header_row);
         self
