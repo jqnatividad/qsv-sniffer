@@ -2,7 +2,7 @@ use std::io::{Read, Seek, SeekFrom};
 
 use crate::error::Result;
 
-pub(crate) fn preamble_skipcount<R: Read>(reader: &mut R, n_preamble_rows: usize) -> Result<usize> {
+pub fn preamble_skipcount<R: Read>(reader: &mut R, n_preamble_rows: usize) -> Result<usize> {
     if n_preamble_rows == 0 {
         return Ok(0);
     }
@@ -33,7 +33,7 @@ pub(crate) fn preamble_skipcount<R: Read>(reader: &mut R, n_preamble_rows: usize
     Ok(skipcount)
 }
 
-pub(crate) fn snip_preamble<R: Read + Seek>(mut reader: R, n_preamble_rows: usize) -> Result<()> {
+pub fn snip_preamble<R: Read + Seek>(mut reader: R, n_preamble_rows: usize) -> Result<()> {
     let seek_point = preamble_skipcount(&mut reader, n_preamble_rows)?;
     reader.seek(SeekFrom::Start(seek_point as u64))?;
     Ok(())

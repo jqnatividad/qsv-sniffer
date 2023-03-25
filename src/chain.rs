@@ -1,25 +1,25 @@
 // states: 0 = SteadyStrict, 1 = SteadyFlexible, 2 = Unsteady
-pub(crate) const N_STATES: usize = 3;
-pub(crate) const STATE_STEADYSTRICT: usize = 0;
-pub(crate) const STATE_STEADYFLEX: usize = 1;
-pub(crate) const STATE_UNSTEADY: usize = 2;
+pub const N_STATES: usize = 3;
+pub const STATE_STEADYSTRICT: usize = 0;
+pub const STATE_STEADYFLEX: usize = 1;
+pub const STATE_UNSTEADY: usize = 2;
 // observations: 0 = MaxValue, 1 = Other, 2 = Zero
-pub(crate) const N_OBS: usize = 3;
-pub(crate) const OBS_MAXVALUE: usize = 0;
-pub(crate) const OBS_OTHER: usize = 1;
-pub(crate) const OBS_ZERO: usize = 2;
+pub const N_OBS: usize = 3;
+pub const OBS_MAXVALUE: usize = 0;
+pub const OBS_OTHER: usize = 1;
+pub const OBS_ZERO: usize = 2;
 
 #[derive(Debug, Default, Clone)]
-pub(crate) struct Chain {
+pub struct Chain {
     observations: Vec<usize>,
 }
 #[derive(Debug, Clone, Copy)]
-pub(crate) struct VIteration {
+pub struct VIteration {
     pub(crate) prob: f64,
     pub(crate) prev: Option<usize>,
 }
 #[derive(Debug, Clone)]
-pub(crate) struct ViterbiResults {
+pub struct ViterbiResults {
     pub(crate) max_delim_freq: usize,
     pub(crate) path: Vec<(usize, VIteration)>,
 }
