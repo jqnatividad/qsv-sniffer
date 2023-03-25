@@ -28,11 +28,11 @@ opt-level     = 3
 strip         = true
 
 [dependencies]
-bitflags = "1"
+bitflags = "2"
 bytecount = "0.6"
 csv = "1"
 csv-core = "0.1"
 memchr = "2"
-qsv-dateparser = "0.6"
+qsv-dateparser = "0.7"
 regex = "1"
 tabwriter = "1.2"
