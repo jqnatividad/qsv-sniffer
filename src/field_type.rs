@@ -17,7 +17,7 @@ pub enum DatePreference {
 bitflags! {
     /// Possible guesses for the field type. Implementged as a bitflag struct (see
     /// [`bitflags`](https://docs.rs/bitflags/)).
-    #[derive(Default)]
+    #[derive(Default, Clone, Copy)]
     pub(crate) struct TypeGuesses: u32 {
         const BOOLEAN   = 0b00000001;
         const UNSIGNED  = 0b00000010;
