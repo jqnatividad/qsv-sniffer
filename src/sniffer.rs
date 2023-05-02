@@ -313,6 +313,9 @@ impl Sniffer {
                     max_delim_freq,
                     path,
                 } = chain.viterbi();
+                if path.is_empty() {
+                    return acc;
+                }
                 let (final_state, final_viter) = path[path.len() - 1];
                 if final_state < best_state
                     || (final_state == best_state && final_viter.prob > best_state_prob)
