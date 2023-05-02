@@ -49,8 +49,11 @@ impl fmt::Display for Metadata {
             )
             .unwrap_or_default();
         }
+        // safety: we just wrote to the tabwriter, so it should be ok to unwrap
         tabwtr.flush().unwrap();
 
+        // safety: we just flushed the tabwriter, so it should be ok to unwrap the inner vec
+        // the second unwrap is to convert the vec<u8> to a String, so its also safe.
         let tabbed_field_list = String::from_utf8(tabwtr.into_inner().unwrap()).unwrap();
         writeln!(f, "{tabbed_field_list}")?;
 
