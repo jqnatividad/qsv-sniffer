@@ -152,7 +152,9 @@ impl Sniffer {
                 && self.delimiter_freq.is_some()
                 && self.has_header_row.is_some()
                 && self.avg_record_len.is_some()
+                && self.delimiter_freq.is_some()
         );
+        // safety: we just asserted that all these are Some, so it's safe to unwrap
         Ok(Metadata {
             dialect: Dialect {
                 delimiter: self.delimiter.unwrap(),
@@ -223,7 +225,7 @@ impl Sniffer {
     fn infer_preamble_known_delim<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()> {
         // prerequisites for calling this function:
         assert!(self.delimiter.is_some() && self.quote.is_some());
-        // unwraps for delimiter and quote are safe
+        // safety: unwraps for delimiter and quote are safe
         let (quote, delim) = (self.quote.clone().unwrap(), self.delimiter.unwrap());
 
         let sample_iter = take_sample_from_start(reader, self.get_sample_size())?;
@@ -360,7 +362,7 @@ impl Sniffer {
     fn infer_types<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()> {
         // prerequisites for calling this function:
         assert!(self.delimiter_freq.is_some());
-        // unwrap is safe
+        // safety: unwrap is safe
         let field_count = self.delimiter_freq.unwrap() + 1;
 
         let mut csv_reader = self.create_csv_reader(reader)?;
@@ -481,6 +483,7 @@ fn quote_count<R: Read>(
         Some(delim) => format!(r#"{character}\s*?{delim}\s*{character}"#),
         None => format!(r#"{character}\s*?(?P<delim>[^\w\n'"`])\s*{character}"#),
     };
+    // safety: unwrap is safe as we know the pattern is valid
     let re = Regex::new(&pattern).unwrap();
 
     // TODO: a hashmap isn't an ideal choice for this, I believe (since it requires a linear
