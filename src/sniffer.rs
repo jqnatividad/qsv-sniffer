@@ -151,6 +151,7 @@ impl Sniffer {
                 && self.is_utf8.is_some()
                 && self.delimiter_freq.is_some()
                 && self.has_header_row.is_some()
+                && self.avg_record_len.is_some()
         );
         Ok(Metadata {
             dialect: Dialect {
@@ -411,6 +412,7 @@ impl Sniffer {
             // so we're going to assume it's a data row, not a header row.
             self.has_header_row = Some(false);
             self.types = get_best_types(&header_row_types);
+            self.avg_record_len = Some(n_bytes);
             return Ok(());
         }
 
