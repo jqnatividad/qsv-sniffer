@@ -28,7 +28,7 @@ opt-level     = 3
 strip         = true
 
 [dependencies]
-bitflags = "1"
+bitflags = "2.2"
 bytecount = "0.6"
 csv = "1"
 csv-core = "0.1"
