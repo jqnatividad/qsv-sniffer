@@ -11,7 +11,9 @@ Its a detached fork of [csv-sniffer](https://github.com/jblondin/csv-sniffer) wi
 * field names
 * number of rows
 * average record length
-* additional data types - Date and DateTime
+* additional data types - Date/DateTime and NULL
+* smarter Boolean type detection - "true" and "false" are not the only Boolean values it detects. It now also detects
+  1/0, yes/no, y/n, true/false, t/f - case insensitive
 
 > ℹ️ **NOTE:** This fork is optimized to support [qsv](https://github.com/jqnatividad/qsv), and its development
 will be primarily dictated by qsv's requirements. Please continue to use `csv-sniffer` if you want
@@ -34,7 +36,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-qsv-sniffer = "0.7"
+qsv-sniffer = "0.9"
 ```
 
 and this to your crate root:
