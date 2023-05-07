@@ -116,12 +116,11 @@ pub(crate) fn infer_types(s: &str) -> TypeGuesses {
 
 #[inline]
 fn infer_boolean(s: &str) -> bool {
-    // safety: we know that s is not empty as we checked for NULL before calling this function
     let lower_s = s.to_ascii_lowercase();
-    match lower_s.as_str() {
-        "0" | "1" | "t" | "f" | "y" | "n" | "true" | "false" | "yes" | "no" => true,
-        _ => false,
-    }
+    matches!(
+        lower_s.as_str(),
+        "0" | "1" | "t" | "f" | "y" | "n" | "true" | "false" | "yes" | "no"
+    )
 }
 
 pub(crate) fn infer_record_types(record: &StringRecord) -> Vec<TypeGuesses> {
