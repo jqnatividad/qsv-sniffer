@@ -51,7 +51,7 @@ impl<'a, R: Read> Iterator for SampleIter<'a, R> {
             return None;
         }
 
-        let mut buf = vec![];
+        let mut buf = Vec::with_capacity(1000); // minimize allocations
         let n_bytes_read = match self.reader.read_until(b'\n', &mut buf) {
             Ok(n_bytes_read) => n_bytes_read,
             Err(e) => {
@@ -62,8 +62,8 @@ impl<'a, R: Read> Iterator for SampleIter<'a, R> {
             self.is_done = true;
             return None;
         }
-        let mut output = if let Ok(str_utf8) = String::from_utf8(buf.clone()) {
-            str_utf8
+        let mut output = if let Ok(str_utf8) = simdutf8::basic::from_utf8(&buf.clone()) {
+            str_utf8.to_string()
         } else {
             // Its not all utf-8, set IS_UTF8 global to false
             IS_UTF8.with(|flag| {
