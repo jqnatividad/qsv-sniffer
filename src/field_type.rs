@@ -26,16 +26,20 @@ bitflags! {
         const DATE      = 0b00010000;
         const DATETIME  = 0b00100000;
         const TEXT      = 0b01000000;
+        const NULL      = 0b10000000;
     }
 }
 
 impl TypeGuesses {
     /// Compute the 'best-fitting' `Type` among the guesses of this struct. 'Best-fitting' in this
-    /// case means the narrowest definition: `Type::Boolean` being the narrowest, and `Type::Text`
+    /// case means the narrowest definition: `Type::NULL` being the narrowest, and `Type::Text`
     /// being the widest (since everything can be a text field).
     pub(crate) const fn best(self) -> Type {
-        // if all values are some sort of boolean (0 or 1, or 'true' and 'false'), guess boolean
-        if self.contains(TypeGuesses::BOOLEAN) {
+        if self.contains(TypeGuesses::NULL) {
+            Type::NULL
+        }
+        // if all values are some sort of boolean (0/1, true/false, yes/no, t/f, y/n), guess boolean
+        else if self.contains(TypeGuesses::BOOLEAN) {
             Type::Boolean
         }
         // if all values are integer and > 0, guess unsigned
@@ -86,7 +90,7 @@ pub(crate) fn infer_types(s: &str) -> TypeGuesses {
     if s.parse::<i64>().is_ok() {
         guesses |= TypeGuesses::SIGNED;
     }
-    if s.parse::<bool>().is_ok() {
+    if infer_boolean(s) {
         guesses |= TypeGuesses::BOOLEAN;
     }
     if s.parse::<f64>().is_ok() {
@@ -110,6 +114,16 @@ pub(crate) fn infer_types(s: &str) -> TypeGuesses {
     guesses
 }
 
+#[inline]
+fn infer_boolean(s: &str) -> bool {
+    // safety: we know that s is not empty as we checked for NULL before calling this function
+    let lower_s = s.to_ascii_lowercase();
+    match lower_s.as_str() {
+        "0" | "1" | "t" | "f" | "y" | "n" | "true" | "false" | "yes" | "no" => true,
+        _ => false,
+    }
+}
+
 pub(crate) fn infer_record_types(record: &StringRecord) -> Vec<TypeGuesses> {
     record.iter().map(infer_types).collect()
 }
@@ -131,6 +145,8 @@ pub enum Type {
     Date,
     /// DateTime
     DateTime,
+    /// Null
+    NULL,
 }
 pub(crate) fn get_best_types(guesses: &[TypeGuesses]) -> Vec<Type> {
     guesses.iter().map(|guess| guess.best()).collect()
@@ -148,6 +164,7 @@ impl fmt::Display for Type {
                 Type::Float => "Float",
                 Type::Date => "Date",
                 Type::DateTime => "DateTime",
+                Type::NULL => "NULL",
             }
         )
     }

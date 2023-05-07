@@ -93,6 +93,51 @@ fn test_comma() {
 }
 
 #[test]
+fn test_boolean() {
+    let data_filepath = Path::new(file!())
+        .parent()
+        .unwrap()
+        .join("data/library-visitors-boolean.csv");
+    let metadata = Sniffer::new()
+        .sample_size(SampleSize::All)
+        .sniff_path(data_filepath)
+        .unwrap();
+    assert_eq!(
+        metadata,
+        Metadata {
+            dialect: Dialect {
+                delimiter: b',',
+                header: Header {
+                    has_header_row: true,
+                    num_preamble_rows: 0,
+                },
+                quote: Quote::None,
+                flexible: false,
+                is_utf8: true,
+            },
+            avg_record_len: 31,
+            num_fields: 6,
+            fields: vec![
+                "Month".to_string(),
+                "Door Count".to_string(),
+                "Web Site Visits".to_string(),
+                "Catalog Visits".to_string(),
+                "Overdrive Visits".to_string(),
+                "Vacation".to_string()
+            ],
+            types: vec![
+                Type::Text,
+                Type::Unsigned,
+                Type::Unsigned,
+                Type::Unsigned,
+                Type::Unsigned,
+                Type::Boolean
+            ]
+        }
+    );
+}
+
+#[test]
 fn test_flexible() {
     let data_filepath = Path::new(file!())
         .parent()
@@ -265,7 +310,7 @@ fn test_date_sniffing() {
                 Type::Text,
                 Type::Text,
                 Type::Text,
-                Type::Boolean,
+                Type::NULL,
                 Type::Text,
                 Type::Unsigned,
                 Type::Text,
