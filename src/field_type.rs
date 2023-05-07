@@ -116,7 +116,8 @@ pub(crate) fn infer_types(s: &str) -> TypeGuesses {
 
 #[inline]
 fn infer_boolean(s: &str) -> bool {
-    let lower_s = s.to_ascii_lowercase();
+    let first5chars: String = s.chars().take(5).collect();
+    let lower_s = first5chars.to_lowercase();
     matches!(
         lower_s.as_str(),
         "0" | "1" | "t" | "f" | "y" | "n" | "true" | "false" | "yes" | "no"
