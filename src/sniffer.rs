@@ -224,7 +224,13 @@ impl Sniffer {
     // Updates delimiter frequency, number of preamble rows, and flexible boolean.
     fn infer_preamble_known_delim<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()> {
         // prerequisites for calling this function:
-        assert!(self.delimiter.is_some() && self.quote.is_some());
+        if !(self.delimiter.is_some() && self.quote.is_some()) {
+            // instead of assert, return an error
+            // assert!(self.delimiter.is_some() && self.quote.is_some());
+            return Err(SnifferError::SniffingFailed(
+                "infer_preamble_known_delim called without delimiter and quote".into(),
+            ));
+        }
         // safety: unwraps for delimiter and quote are safe
         let (quote, delim) = (self.quote.clone().unwrap(), self.delimiter.unwrap());
 
@@ -361,7 +367,13 @@ impl Sniffer {
 
     fn infer_types<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()> {
         // prerequisites for calling this function:
-        assert!(self.delimiter_freq.is_some());
+        if self.delimiter_freq.is_none() {
+            // instead of assert, return error
+            // assert!(self.delimiter_freq.is_some());
+            return Err(SnifferError::SniffingFailed(
+                "delimiter frequency not known".to_string(),
+            ));
+        }
         // safety: unwrap is safe
         let field_count = self.delimiter_freq.unwrap() + 1;
 
@@ -515,8 +527,12 @@ fn quote_count<R: Read>(
         delim_count_map
             .iter()
             .fold((0, b'\0'), |acc, (delim, &delim_count)| {
-                assert!(delim.len() == 1);
-                if delim_count > acc.0 {
+                // assert!(delim.len() == 1);
+                if delim.len() != 1 {
+                    // instead of assert, we set delim count to 0 and delim to null byte
+                    // this will be picked up the delim_count == 0 check below
+                    (0, b'\0')
+                } else if delim_count > acc.0 {
                     (delim_count, (delim.as_ref() as &[u8])[0])
                 } else {
                     acc
@@ -524,7 +540,13 @@ fn quote_count<R: Read>(
             });
 
     // delim_count should be nonzero; delim should always match at least something
-    assert_ne!(delim_count, 0, "invalid regex match: no delimiter found");
+    // instead of the assert, we return an error
+    if delim_count == 0 {
+        // assert_ne!(delim_count, 0, "invalid regex match: no delimiter found");
+        return Err(SnifferError::SniffingFailed(
+            "invalid regex match: no delimiter found".into(),
+        ));
+    }
     Ok(Some((count, delim)))
 }
 
