@@ -245,7 +245,7 @@ impl Sniffer {
                 "infer_preamble_known_delim called without delimiter and quote".into(),
             ));
         }
-        // safety: unwraps for delimiter and quote are safe
+        // safety: unwraps for delimiter and quote are safe since we just checked above
         let (quote, delim) = (self.quote.clone().unwrap(), self.delimiter.unwrap());
 
         let sample_iter = take_sample_from_start(reader, self.get_sample_size())?;
@@ -388,7 +388,7 @@ impl Sniffer {
                 "delimiter frequency not known".to_string(),
             ));
         }
-        // safety: unwrap is safe
+        // safety: unwrap is safe as we just checked that delimiter_freq is Some
         let field_count = self.delimiter_freq.unwrap() + 1;
 
         let mut csv_reader = self.create_csv_reader(reader)?;
