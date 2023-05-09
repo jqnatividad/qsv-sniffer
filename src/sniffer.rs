@@ -143,17 +143,31 @@ impl Sniffer {
         self.is_utf8 = Some(IS_UTF8.with(|flag| *flag.borrow()));
 
         // as this point of the process, we should have all these filled in.
-        assert!(
-            self.delimiter.is_some()
-                && self.num_preamble_rows.is_some()
-                && self.quote.is_some()
-                && self.flexible.is_some()
-                && self.is_utf8.is_some()
-                && self.delimiter_freq.is_some()
-                && self.has_header_row.is_some()
-                && self.avg_record_len.is_some()
-                && self.delimiter_freq.is_some()
-        );
+        // assert!(
+        //     self.delimiter.is_some()
+        //         && self.num_preamble_rows.is_some()
+        //         && self.quote.is_some()
+        //         && self.flexible.is_some()
+        //         && self.is_utf8.is_some()
+        //         && self.delimiter_freq.is_some()
+        //         && self.has_header_row.is_some()
+        //         && self.avg_record_len.is_some()
+        //         && self.delimiter_freq.is_some()
+        // );
+        if !(self.delimiter.is_some()
+            && self.num_preamble_rows.is_some()
+            && self.quote.is_some()
+            && self.flexible.is_some()
+            && self.is_utf8.is_some()
+            && self.delimiter_freq.is_some()
+            && self.has_header_row.is_some()
+            && self.avg_record_len.is_some()
+            && self.delimiter_freq.is_some())
+        {
+            return Err(SnifferError::SniffingFailed(
+                "Failed to infer all metadata".into(),
+            ));
+        }
         // safety: we just asserted that all these are Some, so it's safe to unwrap
         Ok(Metadata {
             dialect: Dialect {
