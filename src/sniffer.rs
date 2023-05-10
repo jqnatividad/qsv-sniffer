@@ -164,9 +164,10 @@ impl Sniffer {
             && self.avg_record_len.is_some()
             && self.delimiter_freq.is_some())
         {
-            return Err(SnifferError::SniffingFailed(
-                "Failed to infer all metadata".into(),
-            ));
+            return Err(SnifferError::SniffingFailed(format!(
+                "Failed to infer all metadata: {:?}",
+                self
+            )));
         }
         // safety: we just asserted that all these are Some, so it's safe to unwrap
         Ok(Metadata {
