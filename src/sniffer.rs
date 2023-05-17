@@ -1,5 +1,5 @@
+use hashbrown::HashMap;
 use std::cell::RefCell;
-use std::collections::HashMap;
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
 use std::path::Path;
@@ -165,11 +165,10 @@ impl Sniffer {
             && self.delimiter_freq.is_some())
         {
             return Err(SnifferError::SniffingFailed(format!(
-                "Failed to infer all metadata: {:?}",
-                self
+                "Failed to infer all metadata: {self:?}"
             )));
         }
-        // safety: we just asserted that all these are Some, so it's safe to unwrap
+        // safety: we just checked that all these are Some, so it's safe to unwrap
         Ok(Metadata {
             dialect: Dialect {
                 delimiter: self.delimiter.unwrap(),
@@ -513,8 +512,6 @@ fn quote_count<R: Read>(
     // safety: unwrap is safe as we know the pattern is valid
     let re = Regex::new(&pattern).unwrap();
 
-    // TODO: a hashmap isn't an ideal choice for this, I believe (since it requires a linear
-    // search of the values at the end). Consider other options
     let mut delim_count_map: HashMap<String, usize> = HashMap::new();
     let mut count = 0;
     for line in sample_iter {
