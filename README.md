@@ -16,8 +16,7 @@ Its a detached fork of [csv-sniffer](https://github.com/jblondin/csv-sniffer) wi
   1/0, yes/no, y/n, true/false, t/f - case insensitive
 
 > ℹ️ **NOTE:** This fork is optimized to support [qsv](https://github.com/jqnatividad/qsv), and its development
-will be primarily dictated by qsv's requirements. Please continue to use `csv-sniffer` if you want
-a general-purpose CSV sniffer.
+will be primarily dictated by qsv's requirements.
 
 # Setup
 
