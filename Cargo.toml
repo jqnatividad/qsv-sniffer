@@ -9,6 +9,7 @@ license = "MIT"
 name = "qsv-sniffer"
 repository = "https://github.com/jqnatividad/qsv-sniffer"
 version = "0.9.4"
+rust-version = "1.70.0"
 
 [features]
 cli = []
