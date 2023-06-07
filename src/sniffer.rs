@@ -192,7 +192,7 @@ impl Sniffer {
     // Quote::None. Only valid quote characters: " (double-quote), ' (single-quote), ` (back-tick).
     fn infer_quotes_delim<R: Read + Seek>(&mut self, reader: &mut R) -> Result<()> {
         if let (&Some(_), &Some(_)) = (&self.quote, &self.delimiter) {
-            // nothing let to infer!
+            // nothing left to infer!
             return Ok(());
         }
         let quote_guesses = match self.quote {
