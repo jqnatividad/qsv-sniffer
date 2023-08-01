@@ -9,7 +9,7 @@ license = "MIT"
 name = "qsv-sniffer"
 repository = "https://github.com/jqnatividad/qsv-sniffer"
 version = "0.9.4"
-rust-version = "1.70.0"
+rust-version = "1.71.0"
 
 [features]
 cli = []
@@ -35,7 +35,7 @@ csv = "1"
 csv-core = "0.1"
 hashbrown = "0.14"
 memchr = "2"
-qsv-dateparser = "0.9"
+qsv-dateparser = "0.10"
 regex = "1"
 tabwriter = "1.2"
 
