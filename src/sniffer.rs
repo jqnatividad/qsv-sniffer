@@ -454,7 +454,7 @@ impl Sniffer {
         {
             self.has_header_row = Some(true);
             // get field names in header
-            for field in csv_reader.byte_headers()?.iter() {
+            for field in csv_reader.byte_headers()? {
                 self.fields.push(String::from_utf8_lossy(field).to_string());
             }
         } else {
@@ -505,9 +505,10 @@ fn quote_count<R: Read>(
     character: char,
     delim: Option<u8>,
 ) -> Result<Option<(usize, u8)>> {
-    let pattern = match delim {
-        Some(delim) => format!(r#"{character}\s*?{delim}\s*{character}"#),
-        None => format!(r#"{character}\s*?(?P<delim>[^\w\n'"`])\s*{character}"#),
+    let pattern = if let Some(delim) = delim {
+        format!(r#"{character}\s*?{delim}\s*{character}"#)
+    } else {
+        format!(r#"{character}\s*?(?P<delim>[^\w\n'"`])\s*{character}"#)
     };
     // safety: unwrap is safe as we know the pattern is valid
     let re = Regex::new(&pattern).unwrap();
