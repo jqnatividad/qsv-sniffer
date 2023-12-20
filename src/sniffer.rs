@@ -204,28 +204,22 @@ impl Sniffer {
             }
             None => vec![b'\'', b'"', b'`'],
         };
-        // TODO: this can probably be replaced with a try_fold whenever that leaves nightly
-        let (quote_chr, (quote_cnt, delim_guess)) = quote_guesses.iter().fold(
-            Ok((b'"', (0, b'\0'))),
-            |acc: Result<(u8, (usize, u8))>, &chr| {
-                if let Ok(acc) = acc {
-                    let mut sample_reader = take_sample_from_start(reader, self.get_sample_size())?;
-                    if let Some((cnt, delim_chr)) =
-                        quote_count(&mut sample_reader, char::from(chr), self.delimiter)?
-                    {
-                        Ok(if cnt > (acc.1).0 {
-                            (chr, (cnt, delim_chr))
-                        } else {
-                            acc
-                        })
+        let (quote_chr, (quote_cnt, delim_guess)) = quote_guesses
+            .iter()
+            .try_fold((b'"', (0, b'\0')), |acc, &chr| -> Result<(u8, (usize, u8))> {
+                let mut sample_reader = take_sample_from_start(reader, self.get_sample_size())?;
+                if let Some((cnt, delim_chr)) =
+                    quote_count(&mut sample_reader, char::from(chr), self.delimiter)?
+                {
+                    Ok(if cnt > acc.1 .0 {
+                        (chr, (cnt, delim_chr))
                     } else {
-                        Ok(acc)
-                    }
+                        acc
+                    })
                 } else {
-                    acc
+                    Ok(acc)
                 }
-            },
-        )?;
+            })?;
         if quote_cnt == 0 {
             self.quote = Some(Quote::None);
         } else {
