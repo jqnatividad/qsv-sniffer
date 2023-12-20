@@ -51,7 +51,7 @@ impl<'a, R: Read> Iterator for SampleIter<'a, R> {
             return None;
         }
 
-        let mut buf = Vec::with_capacity(1000); // minimize allocations
+        let mut buf = Vec::new();
         let n_bytes_read = match self.reader.read_until(b'\n', &mut buf) {
             Ok(n_bytes_read) => n_bytes_read,
             Err(e) => {
@@ -62,15 +62,17 @@ impl<'a, R: Read> Iterator for SampleIter<'a, R> {
             self.is_done = true;
             return None;
         }
-        let mut output = if let Ok(str_utf8) = simdutf8::basic::from_utf8(&buf.clone()) {
-            str_utf8.to_string()
-        } else {
-            // Its not all utf-8, set IS_UTF8 global to false
-            IS_UTF8.with(|flag| {
-                *flag.borrow_mut() = false;
-            });
-            String::from_utf8_lossy(&buf).to_string()
-        };
+
+        let mut output = simdutf8::basic::from_utf8(&buf).map_or_else(
+            |_| {
+                // Its not all utf-8, set IS_UTF8 global to false
+                IS_UTF8.with(|flag| {
+                    *flag.borrow_mut() = false;
+                });
+                String::from_utf8_lossy(&buf).to_string()
+            },
+            |str_utf8| str_utf8.to_string(),
+        );
 
         let last_byte = (output.as_ref() as &[u8])[output.len() - 1];
         if last_byte != b'\n' && last_byte != b'\r' {
