@@ -204,9 +204,9 @@ impl Sniffer {
             }
             None => vec![b'\'', b'"', b'`'],
         };
-        let (quote_chr, (quote_cnt, delim_guess)) = quote_guesses
-            .iter()
-            .try_fold((b'"', (0, b'\0')), |acc, &chr| -> Result<(u8, (usize, u8))> {
+        let (quote_chr, (quote_cnt, delim_guess)) = quote_guesses.iter().try_fold(
+            (b'"', (0, b'\0')),
+            |acc, &chr| -> Result<(u8, (usize, u8))> {
                 let mut sample_reader = take_sample_from_start(reader, self.get_sample_size())?;
                 if let Some((cnt, delim_chr)) =
                     quote_count(&mut sample_reader, char::from(chr), self.delimiter)?
@@ -219,7 +219,8 @@ impl Sniffer {
                 } else {
                     Ok(acc)
                 }
-            })?;
+            },
+        )?;
         if quote_cnt == 0 {
             self.quote = Some(Quote::None);
         } else {
