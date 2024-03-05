@@ -19,8 +19,8 @@ use crate::{
     snip::snip_preamble,
 };
 
-thread_local! (pub static IS_UTF8: RefCell<bool> = RefCell::new(true));
-thread_local! (pub static DATE_PREFERENCE: RefCell<DatePreference> = RefCell::new(DatePreference::MdyFormat));
+thread_local! (pub static IS_UTF8: RefCell<bool> = const { RefCell::new(true) });
+thread_local! (pub static DATE_PREFERENCE: RefCell<DatePreference> = const { RefCell::new(DatePreference::MdyFormat) });
 
 /// A CSV sniffer.
 ///
