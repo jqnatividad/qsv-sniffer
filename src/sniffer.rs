@@ -4,7 +4,7 @@ use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
 use std::path::Path;
 
-use csv::{self, Reader, StringRecord};
+use csv::{Reader, StringRecord};
 use csv_core as csvc;
 use regex::Regex;
 
