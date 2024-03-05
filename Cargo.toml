@@ -35,7 +35,7 @@ csv = "1"
 csv-core = "0.1"
 hashbrown = "0.14"
 memchr = "2"
-qsv-dateparser = "0.10"
+qsv-dateparser = "0.11"
 regex = "1"
 tabwriter = "1.3"
 
