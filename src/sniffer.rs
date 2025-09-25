@@ -9,13 +9,13 @@ use csv_core as csvc;
 use regex::Regex;
 
 use crate::{
-    chain::{Chain, ViterbiResults, STATE_STEADYFLEX, STATE_STEADYSTRICT, STATE_UNSTEADY},
+    chain::{Chain, STATE_STEADYFLEX, STATE_STEADYSTRICT, STATE_UNSTEADY, ViterbiResults},
     error::{Result, SnifferError},
     field_type::{
-        get_best_types, infer_record_types, infer_types, DatePreference, Type, TypeGuesses,
+        DatePreference, Type, TypeGuesses, get_best_types, infer_record_types, infer_types,
     },
     metadata::{Dialect, Header, Metadata, Quote},
-    sample::{take_sample_from_start, SampleIter, SampleSize},
+    sample::{SampleIter, SampleSize, take_sample_from_start},
     snip::snip_preamble,
 };
 
@@ -211,7 +211,7 @@ impl Sniffer {
                 if let Some((cnt, delim_chr)) =
                     quote_count(&mut sample_reader, char::from(chr), self.delimiter)?
                 {
-                    Ok(if cnt > acc.1 .0 {
+                    Ok(if cnt > acc.1.0 {
                         (chr, (cnt, delim_chr))
                     } else {
                         acc

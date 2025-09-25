@@ -14,7 +14,10 @@ pub enum SampleSize {
     All,
 }
 
-pub fn take_sample_from_start<R>(reader: &mut R, sample_size: SampleSize) -> Result<SampleIter<'_, R>>
+pub fn take_sample_from_start<R>(
+    reader: &mut R,
+    sample_size: SampleSize,
+) -> Result<SampleIter<'_, R>>
 where
     R: Read + Seek,
 {
