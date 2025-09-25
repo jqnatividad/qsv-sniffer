@@ -8,8 +8,8 @@ keywords = ["csv"]
 license = "MIT"
 name = "qsv-sniffer"
 repository = "https://github.com/jqnatividad/qsv-sniffer"
-version = "0.12.1"
-rust-version = "1.89"
+version = "0.12.2"
+rust-version = "1.85"
 
 [features]
 cli = []
