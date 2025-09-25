@@ -37,7 +37,7 @@ hashbrown = "0.15"
 memchr = "2"
 qsv-dateparser = "0.13"
 regex = "1"
-tabwriter = "1.4"
+qsv-tabwriter = "2"
 
 [target.'cfg(not(target_arch = "aarch64"))'.dependencies]
 simdutf8 = "0.1"

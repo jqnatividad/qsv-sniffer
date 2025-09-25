@@ -7,7 +7,7 @@ use std::io::{Read, Seek, Write};
 use std::path::Path;
 
 use csv::{Reader, ReaderBuilder};
-use tabwriter::TabWriter;
+use qsv_tabwriter::TabWriter;
 
 use crate::{error::Result, field_type::Type, snip::snip_preamble};
 
