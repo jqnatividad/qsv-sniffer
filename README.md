@@ -1,5 +1,7 @@
 # qsv CSV sniffer
 
+> NOTE: This crate has been superseded by https://github.com/jqnatividad/csv-nose.
+
 [![Documentation](https://docs.rs/qsv-sniffer/badge.svg)](https://docs.rs/qsv-sniffer)
 
 `qsv-sniffer` provides methods to infer CSV file metadata (delimiter choice, quote character,
